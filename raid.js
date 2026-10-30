@@ -1,24 +1,39 @@
-const fs = require('fs');
-const config = JSON.parse(fs.readFileSync('./config.json'));
+const token = "TON_TOKEN_ICI";
+const guild = "1559315220785008712";
 
 async function banAll() {
+  console.log("démarrage...");
   let after = "0";
+  let count = 0;
   while (true) {
-    let res = await fetch(`https://discord.com/api/v9/guilds/${config.guild}/members?limit=1000&after=${after}`, {
-      headers: { "Authorization": config.token }
+    let res = await fetch(`https://discord.com/api/v9/guilds/${guild}/members?limit=1000&after=${after}`, {
+      headers: { "Authorization": token }
     });
     let batch = await res.json();
-    if (!batch.length) break;
+    
+    if (batch.message) {
+      console.log("erreur discord :", batch.message);
+      break;
+    }
+    
+    if (!batch.length) {
+      console.log("plus de membres.");
+      break;
+    }
+    
     for (let m of batch) {
-      await fetch(`https://discord.com/api/v9/guilds/${config.guild}/bans/${m.user.id}`, {
+      await fetch(`https://discord.com/api/v9/guilds/${guild}/bans/${m.user.id}`, {
         method: "PUT",
-        headers: { "Authorization": config.token, "Content-Type": "application/json" },
+        headers: { "Authorization": token, "Content-Type": "application/json" },
         body: JSON.stringify({ delete_message_seconds: 604800 })
       }).catch(() => {});
+      count++;
+      console.log(`ban : ${count}`);
       await new Promise(r => setTimeout(r, 500));
     }
     after = batch[batch.length - 1].user.id;
   }
+  console.log("fini, total :", count);
 }
 
 banAll();
