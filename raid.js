@@ -1,5 +1,5 @@
 const token = "MTU2NTE4OTU2MTg5MjQ3NTAwMA.GIR000.44BI8fHRS8iFPHy-pxTvoPQav29y5N6fAXXcW0";
-const guild = "1559315220785008712";
+const guild = "1546202369073614898";
 
 async function banAll() {
   console.log("démarrage...");
