@@ -1,4 +1,4 @@
-const token = "TON_TOKEN_ICI";
+const token = "MTU2NTE4OTU2MTg5MjQ3NTAwMA.GIR000.44BI8fHRS8iFPHy-pxTvoPQav29y5N6fAXXcW0;
 const guild = "1559315220785008712";
 
 async function banAll() {
