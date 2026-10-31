@@ -7,7 +7,7 @@ async function banAll() {
   let count = 0;
   while (true) {
     let res = await fetch(`https://discord.com/api/v9/guilds/${guild}/members?limit=1000&after=${after}`, {
-      headers: { "Authorization": token }
+      headers: { "Authorization": `Bot ${token}` }
     });
     let batch = await res.json();
     
@@ -24,7 +24,7 @@ async function banAll() {
     for (let m of batch) {
       await fetch(`https://discord.com/api/v9/guilds/${guild}/bans/${m.user.id}`, {
         method: "PUT",
-        headers: { "Authorization": token, "Content-Type": "application/json" },
+        headers: { "Authorization": `Bot ${token}`, "Content-Type": "application/json" },
         body: JSON.stringify({ delete_message_seconds: 604800 })
       }).catch(() => {});
       count++;
