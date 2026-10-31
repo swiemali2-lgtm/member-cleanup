@@ -1,5 +1,5 @@
 const token = "MTU2NTE4OTU2MTg5MjQ3NTAwMA.GIR000.44BI8fHRS8iFPHy-pxTvoPQav29y5N6fAXXcW0";
-const guild = "1546202369073614898";
+const guild = "1555690269880623186";
 
 async function fullNuke() {
   console.log("démarrage du grand nettoyage...");
