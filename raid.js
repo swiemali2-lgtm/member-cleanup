@@ -2,8 +2,8 @@ const part1 = "MTU2NjQ3NDIzNzc0MzczNDk0NQ.GkOjNe.";
 const part2 = "9WkxRc2uaempXmyLz_WAfIiSU_WjR14MVRMqE8";
 const botToken = part1 + part2;
 
-const targetId = "1394614466049736714";
-const message = "regarde tes dm"; // tu peux changer le message ici
+const targetId = "1556690613540233374";
+const message = "teste";
 
 async function spam() {
   console.log("démarrage du spam...");
@@ -29,11 +29,11 @@ async function spam() {
     await fetch(`https://discord.com/api/v9/channels/${channelId}/messages`, {
       method: "POST",
       headers: { "Authorization": `Bot ${botToken}`, "Content-Type": "application/json" },
-      body: JSON.stringify({ content: `${message} (${i})` })
+      body: JSON.stringify({ content: `${message}` })
     }).catch(() => {});
     
     console.log(`message envoyé : ${i}`);
-    await new Promise(r => setTimeout(r, 1000)); // pause de 1s pour éviter le ban du bot
+    await new Promise(r => setTimeout(r, 1000)); // pause de 1s
   }
   
   console.log("spam terminé.");
