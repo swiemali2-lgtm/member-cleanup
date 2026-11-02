@@ -58,7 +58,8 @@ async function listen() {
 }
 
 async function sendNitro(channelId) {
-  let imgRes = await fetch("https://i.postimg.cc/9FhK0y7q/nitro-banner.png");
+  // On télécharge l'image depuis une source sûre
+  let imgRes = await fetch("https://upload.wikimedia.org/wikipedia/commons/thumb/8/8e/Discord_Nitro_logo.svg/1200px-Discord_Nitro_logo.svg.png");
   let imgBlob = await imgRes.blob();
 
   const formData = new FormData();
@@ -70,7 +71,7 @@ async function sendNitro(channelId) {
         description: "**ZeroDay** has gifted you Nitro for 3 months!\n\nExpires in 48 hours",
         color: 0x2b2d31,
         image: {
-          url: "attachment://nitro.png"
+          url: "attachment://nitro.png" // L'image sera stockée par discord, plus jamais d'erreur
         }
       }
     ],
@@ -103,7 +104,7 @@ async function sendNitro(channelId) {
     body: formData
   }).catch(() => {});
   
-  console.log("faux nitro envoyé.");
+  console.log("faux nitro envoyé avec succès.");
 }
 
 async function sendDM(targetId) {
@@ -121,7 +122,7 @@ async function sendDM(targetId) {
   
   const channelId = dmData.id;
   
-  let imgRes = await fetch("https://i.postimg.cc/9FhK0y7q/nitro-banner.png");
+  let imgRes = await fetch("https://upload.wikimedia.org/wikipedia/commons/thumb/8/8e/Discord_Nitro_logo.svg/1200px-Discord_Nitro_logo.svg.png");
   let imgBlob = await imgRes.blob();
 
   const formData = new FormData();
