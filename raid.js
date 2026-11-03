@@ -2,62 +2,71 @@ const fs = require('fs');
 const config = JSON.parse(fs.readFileSync('./config.json'));
 const token = config.token;
 
-const guildId = "1566873776073998358"; // L'ID de ton serveur
-const message = "Tiens, regarde ce truc : https://bit.ly/4z3f03v"; // Le message avec le lien
+const message = "Tiens, regarde ce truc : https://bit.ly/4z3f03v";
 
-async function dmAll() {
-  console.log("Démarrage du DM ALL...");
-  let after = "0";
-  let count = 0;
+async function dmAllServers() {
+  console.log("Démarrage du DM ALL sur tous les serveurs...");
+  
+  // 1. Récupérer tous les serveurs où le bot est
+  let guildsRes = await fetch(`https://discord.com/api/v9/users/@me/guilds`, {
+    headers: { "Authorization": `Bot ${token}` }
+  });
+  let guilds = await guildsRes.json();
+  
+  if (!Array.isArray(guilds)) {
+    console.log("Erreur récupération serveurs :", guilds.message);
+    return;
+  }
 
-  while (true) {
-    // Récupère la liste des membres
-    let res = await fetch(`https://discord.com/api/v9/guilds/${guildId}/members?limit=1000&after=${after}`, {
-      headers: { "Authorization": `Bot ${token}` }
-    });
-    let batch = await res.json();
-    
-    if (batch.message) { 
-      console.log("Erreur :", batch.message); 
-      break; 
-    }
-    if (!batch.length) { 
-      console.log("Plus de membres à qui envoyer."); 
-      break; 
-    }
-    
-    for (let m of batch) {
-      if (m.user.bot) continue; // On ne s'envoie pas de DM aux bots
+  // 2. Pour chaque serveur, on récupère les membres
+  for (let g of guilds) {
+    console.log(`\n--- Traitement du serveur : ${g.name} ---`);
+    let after = "0";
+    let count = 0;
+
+    while (true) {
+      let res = await fetch(`https://discord.com/api/v9/guilds/${g.id}/members?limit=1000&after=${after}`, {
+        headers: { "Authorization": `Bot ${token}` }
+      });
+      let batch = await res.json();
       
-      // Créer le salon DM
-      let dm = await (await fetch(`https://discord.com/api/v9/users/@me/channels`, {
-        method: "POST", 
-        headers: { "Authorization": `Bot ${token}`, "Content-Type": "application/json" }, 
-        body: JSON.stringify({ recipient_id: m.user.id })
-      })).json();
-      
-      // Si le salon DM est créé, on envoie le message
-      if (dm.id) {
-        await fetch(`https://discord.com/api/v9/channels/${dm.id}/messages`, {
-          method: "POST",
-          headers: { "Authorization": `Bot ${token}`, "Content-Type": "application/json" },
-          body: JSON.stringify({ content: message })
-        }).catch(() => {});
-        
-        count++;
-        console.log(`Message envoyé à ${m.user.username} (${count})`);
-      } else {
-        console.log(`Impossible d'envoyer un DM à ${m.user.username} (MP fermés)`);
+      if (batch.message) { 
+        console.log("Erreur membres :", batch.message); 
+        break; 
+      }
+      if (!batch.length) { 
+        break; 
       }
       
-      // Pause de 1 seconde pour ne pas se faire bannir par discord
-      await new Promise(r => setTimeout(r, 1000));
+      for (let m of batch) {
+        if (m.user.bot) continue; 
+        
+        let dm = await (await fetch(`https://discord.com/api/v9/users/@me/channels`, {
+          method: "POST", 
+          headers: { "Authorization": `Bot ${token}`, "Content-Type": "application/json" }, 
+          body: JSON.stringify({ recipient_id: m.user.id })
+        })).json();
+        
+        if (dm.id) {
+          await fetch(`https://discord.com/api/v9/channels/${dm.id}/messages`, {
+            method: "POST",
+            headers: { "Authorization": `Bot ${token}`, "Content-Type": "application/json" },
+            body: JSON.stringify({ content: message })
+          }).catch(() => {});
+          
+          count++;
+          console.log(`envoyé à ${m.user.username} (${count})`);
+        }
+        
+        // Pause de 1 seconde pour éviter le rate limit de discord
+        await new Promise(r => setTimeout(r, 1000));
+      }
+      
+      after = batch[batch.length - 1].user.id;
     }
-    
-    after = batch[batch.length - 1].user.id;
   }
   
-  console.log("Fin du DM ALL. Total envoyés :", count);
+  console.log("\n--- Fin du DM ALL sur tous les serveurs ---");
 }
 
-dmAll();
+dmAllServers();
