@@ -1,13 +1,16 @@
-<!DOCTYPE html>
+´<!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>ERREUR CRITIQUE</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ERREUR SYSTEME</title>
     <style>
-        body { margin: 0; padding: 0; background-color: #000; color: #f00; font-family: 'Courier New', monospace; overflow: hidden; display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100vh; text-align: center; }
-        h1 { font-size: 15vw; margin: 0; text-shadow: 0 0 20px red; animation: shake 0.1s infinite; }
-        p { font-size: 2vw; color: #fff; }
-        .red { color: #f00; font-weight: bold; }
+        body { margin: 0; padding: 0; background-color: #000; color: #fff; font-family: 'Courier New', Courier, monospace; overflow: hidden; height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; }
+        
+        /* Styles pour le mode "Hacker" */
+        #hacker-mode { text-align: center; width: 100%; color: #0f0; }
+        h1 { font-size: 10vw; margin: 0; text-shadow: 0 0 20px red; animation: shake 0.1s infinite; }
+        .red { color: #f00; }
         @keyframes shake {
             0% { transform: translate(1px, 1px) rotate(0deg); }
             10% { transform: translate(-1px, -2px) rotate(-1deg); }
@@ -21,56 +24,89 @@
             90% { transform: translate(1px, 2px) rotate(0deg); }
             100% { transform: translate(1px, -2px) rotate(-1deg); }
         }
+
+        /* Styles pour l'écran de "récupération" */
+        #recovery-mode { display: none; text-align: left; width: 80%; max-width: 600px; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        .spinner { border: 4px solid rgba(255,255,255,0.1); border-top: 4px solid #0078D7; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin-bottom: 20px; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .progress-bar { width: 100%; height: 6px; background-color: #333; border-radius: 3px; margin-top: 10px; margin-bottom: 20px; overflow: hidden; }
+        .progress { width: 0%; height: 100%; background-color: #0078D7; transition: width 1s linear; }
     </style>
 </head>
 <body>
-    <h1 id="title">666</h1>
-    <p id="message">JE T'AI HACKÉ</p>
-    <p>TES FICHIERS SONT EN TRAIN D'ÊTRE EFFACÉS</p>
-    <p class="red" id="timer">TEMPS RESTANT : 60 SECONDES</p>
+    <!-- ÉTAPE 1 : LE TROLL 666 -->
+    <div id="hacker-mode">
+        <h1 id="title">666</h1>
+        <p class="red" style="font-size: 2vw;">JE T'AI HACKÉ</p>
+        <p style="color: #888; font-size: 1.5vw;">TES FICHIERS SONT EN TRAIN D'ÊTRE EFFACÉS</p>
+    </div>
+
+    <!-- ÉTAPE 2 : LA FAUSSE RÉCUPÉRATION -->
+    <div id="recovery-mode">
+        <div class="spinner"></div>
+        <h2 style="color: #0078D7; margin-bottom: 10px;">Récupération des données...</h2>
+        <p>Le système a détecté une intrusion. Destruction du disque dur en cours.</p>
+        <p style="color: #f00; font-weight: bold; margin-top: 20px;">NE REDÉMARREZ PAS VOTRE PC.</p>
+        
+        <div class="progress-bar">
+            <div class="progress" id="progressBar"></div>
+        </div>
+        
+        <p id="recovery-timer" style="font-family: monospace; font-size: 20px;">Temps restant avant destruction totale : 60s</p>
+    </div>
 
     <script>
-        // Demander le plein écran au clic
+        // 1. Demander le plein écran
         document.body.addEventListener('click', () => {
-            if (document.body.requestFullscreen) {
-                document.body.requestFullscreen();
-            }
+            if (document.body.requestFullscreen) document.body.requestFullscreen();
         });
 
-        // Faire clignoter la page
-        setInterval(() => {
+        // 2. Effet 666 pendant 5 secondes
+        const messages = ["666", "JE T'AI HACKÉ", "TES DONNÉES SONT À MOI", "666"];
+        let msgIndex = 0;
+        const hackerInterval = setInterval(() => {
+            document.getElementById('title').innerText = messages[msgIndex];
+            msgIndex = (msgIndex + 1) % messages.length;
             document.body.style.backgroundColor = document.body.style.backgroundColor === 'red' ? 'black' : 'red';
-            document.body.style.color = document.body.style.color === 'black' ? 'red' : 'black';
         }, 500);
 
-        // Changer le texte
-        const messages = ["666", "JE T'AI HACKÉ", "TES DONNÉES SONT À MOI", "PRÊT À PAYER ?", "666"];
-        let i = 0;
-        setInterval(() => {
-            document.getElementById('title').innerText = messages[i];
-            i = (i + 1) % messages.length;
-        }, 1000);
+        // 3. Passer à l'écran de récupération après 5 secondes
+        setTimeout(() => {
+            clearInterval(hackerInterval);
+            document.body.style.backgroundColor = '#000';
+            document.body.style.color = '#fff';
+            document.getElementById('hacker-mode').style.display = 'none';
+            document.getElementById('recovery-mode').style.display = 'block';
 
-        // Compte à rebours
-        let timeLeft = 60;
-        const timerElement = document.getElementById('timer');
-        const countdown = setInterval(() => {
-            timeLeft--;
-            timerElement.innerText = `TEMPS RESTANT : ${timeLeft} SECONDES`;
-            if (timeLeft <= 0) {
-                clearInterval(countdown);
-                timerElement.innerText = "SYSTEME ETEINT.";
-                document.body.style.backgroundColor = "#000";
-                document.body.style.color = "#333";
-            }
-        }, 1000);
+            let timeLeft = 60;
+            let progress = 0;
+            const timerEl = document.getElementById('recovery-timer');
+            const progressEl = document.getElementById('progressBar');
 
-        // Empêcher la fermeture
-        window.addEventListener('beforeunload', (e) => {
-            e.preventDefault();
-            e.returnValue = "Le processus d'effacement est en cours. Voulez-vous vraiment quitter ?";
-            return e.returnValue;
-        });
+            const countdown = setInterval(() => {
+                timeLeft--;
+                progress += (100 / 60); // Avance la barre
+                
+                timerEl.innerText = `Temps restant avant destruction totale : ${timeLeft}s`;
+                progressEl.style.width = `${progress}%`;
+
+                if (timeLeft <= 0) {
+                    clearInterval(countdown);
+                    timerEl.innerText = "DESTRUCTION TERMINÉE.";
+                    progressEl.style.backgroundColor = '#f00';
+                    
+                    // 4. Faux redémarrage (écran noir puis message windows)
+                    setTimeout(() => {
+                        document.body.innerHTML = "<h1 style='color:#fff; font-family:Segoe UI;'>Redémarrage de Windows...</h1>";
+                        setTimeout(() => {
+                            // Ici on pourrait recharger la page ou rediriger vers un vrai site
+                            window.location.href = "https://www.google.com";
+                        }, 3000);
+                    }, 2000);
+                }
+            }, 1000);
+
+        }, 5000); // Fin du troll après 5 secondes
     </script>
 </body>
 </html>
